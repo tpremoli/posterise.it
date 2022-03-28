@@ -1,0 +1,15 @@
+django 
+python-decouple
+msal
+PyYAML
+python-dateutil
+coverage
+flake8
+pillow
+django-crispy-forms
+django-settings-export
+django-cleanup
+django-utils-six
+better_profanity
+selenium
+model_bakery

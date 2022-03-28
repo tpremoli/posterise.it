@@ -1,0 +1,285 @@
+<!--
+    Authors:
+        - Michael Hills
+        - Tomas Premoli
+        - Kate Belson
+-->
+
+{% extends 'base.html' %}
+
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <title>Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>  
+
+
+<h1>Home Template</h1>
+
+
+{% block filter %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'StyleSheet.css'%}">
+
+
+{% include 'sidebar.html' %}
+
+{% endblock %}
+
+{% block content %}
+<!--Leafletjs css import-->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+
+<!-- Written by Jack Purkiss -->
+    <div class="container-fluid">        
+        <button type="button" id="sidebarCollapse" class="btn btn-info">
+            <i class="fas fa-align-left"></i>
+            <script>
+                $(document).ready(function () {
+
+                    $('#sidebarCollapse').on('click', function () {
+                        $('#sidebar').toggleClass('active');
+                    });
+                
+                });
+            </script>
+        </button>
+    </div>
+
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    });
+</script>
+
+<div class="challenges">
+
+    {% csrf_token %}
+        
+        <div id="displaybox">
+            <div id="map"></div>
+            <style>
+                #map {height: 500px; max-width: 100%}
+            </style>
+            {%for group in request.user.groups.all %}
+                {%if group.name == 'game_master' %}    
+            <button id="devModeSwitch">Enable spoof mode</button>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+
+    {%for group in request.user.groups.all %}
+        {%if group.name == 'game_master' %}
+            <a href="{% url 'createChallenge' %}" id="createChal">Add Challenge</a>
+            <hr>
+        {% endif %}
+    {% endfor %}
+
+    {% if dailyRiddle %}
+
+    <h2>Daily Riddle</h2>
+    <div class="challenge" id="riddle">
+        <p><small> {{dailyRiddle.name}}</small></p>
+        <small>Points: {{dailyRiddle.points}}</small><br>
+        
+        
+    </div>
+
+    {% endif %}
+
+    <h2>In Range:</h2>
+    <div id = "available">
+        
+   
+    </div>
+
+    <h2>Not in Range:</h2>
+    <div id = "unavailable"> 
+        
+
+    </div>
+</div>
+<!--This is essentially a template that challenges will be written into
+    Author: Michael Hills-->
+<template id = "template">
+    <div class="challenge">
+            <p><a href= '{link1}'> {chalname} </a><small> {timesince} </small></p>
+            <small><a href= '{link2}'>{completeChal}</a></small><br>
+            <small>Points: {chalpoint}</small><br>
+            <small>{chaldes}</small><br>
+            
+    </div>
+</template>
+
+
+<script>
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    /*
+        Authors: Michael Hills
+        Description: Determines what challenges should be available for completion
+    */
+    function determineChallenges(lat, lon) {
+
+        // Available contains challenges close enough to complete
+        available = document.getElementById('available');
+
+        // notavail contains challenges too far to complete
+        notavail = document.getElementById('unavailable');
+
+        // Clear the tables
+        while (available.lastChild) {
+             available.removeChild(available.lastChild);
+        }
+
+        while (notavail.lastChild) {
+             notavail.removeChild(notavail.lastChild);
+        }
+       
+        // This loop will create a script for each challenge to update appropriately
+        {% for challenge in challenges %}
+
+            var x1 = lat;
+            var y1 = lon;
+
+            var x2 = {{challenge.lat}};
+            var y2 = {{challenge.long}};
+
+            // This is essentially filling in the html template from before with the challenge info
+            challenge = document.getElementById('template').innerHTML.replace('{chalname}', "{{challenge.name}}")
+                .replace('{timesince}',"{{challenge.created | timesince}} ago")
+                .replace('{link1}',"{% url 'challengeResponses' challenge.id%}")
+                .replace('{chalpoint}',"{{challenge.points}}")
+                .replace('{chaldes}',"{{challenge.description}}");
+
+            // If within the range, include the link and URL in the available challenges section
+            if (Math.hypot(x2 - x1, y2 - y1) <= {{ settings.CHALLENGE_VALIDITY_DISTANCE }}){
+                available.innerHTML += challenge.replace('{link2}',"{% url 'createResponse' challenge.id %}")
+                          .replace('{completeChal}', "Complete Challenge");;
+            }   // Else, remove that info and place in the unavailable challenges section
+            else{
+                notavail.innerHTML += challenge.replace('{link2}',"")
+                        .replace('{completeChal}', "");
+            }
+
+       {% endfor %}
+
+    }
+
+    function dailyRiddle(lat,lon){
+
+        {% if dailyRiddle %}
+       
+
+        if(document.getElementById('riddle')){
+
+            riddle = document.getElementById('riddle')
+
+            var x1 = lat;
+            var y1 = lon;
+
+            var x2 = {{dailyRiddle.lat}};
+            var y2 = {{dailyRiddle.long}};
+
+            if (Math.hypot(x2 - x1, y2 - y1) <= {{ settings.CHALLENGE_VALIDITY_DISTANCE }}){
+
+                if(document.getElementById('rid')){
+
+                }else{
+                
+                    riddle.innerHTML += '<h6 id = "rid"><a href = {% url "viewRiddle" dailyRiddle.id %} >Complete Riddle</a></h6>'
+                    
+
+                }
+
+            }
+            
+            else{
+
+                if(document.getElementById('rid')){
+
+                    document.getElementById('rid').remove()
+                }
+
+
+            }
+         
+        }
+
+
+        {% endif %}
+
+        
+    }
+
+
+    /*
+        Authors: Tomas Premoli
+        Description: Loads all the challenges and map scripts
+    */
+    window.onload = function(){
+        var maxSouth = {{ settings.MAX_SOUTH }};
+        var maxNorth = {{ settings.MAX_NORTH }};
+        var maxWest = {{ settings.MAX_WEST }};
+        var maxEast = {{ settings.MAX_EAST }};
+        var minZoom = {{ settings.MIN_ZOOM }};
+        var maxZoom = {{ settings.MAX_ZOOM }};
+        var drawBox = {{ settings.DRAW_BOUNDING_BOX }};
+        var boxColor = "{{ settings.BOUNDING_BOX_COLOR }}";
+        map = mapgen('map', maxSouth, maxNorth, maxWest, maxEast, minZoom, maxZoom, drawBox, boxColor);
+
+        weeklyIcon = generateWeeklyIcon();
+        
+        // This loop writes the markers for the challenges in JavaScript which are then rendered by the map
+        // Can be extended to go to challenge page on click
+        {% for challenge in challenges %}
+            L.marker([ {{challenge.lat}}, {{challenge.long}} ],
+                {title:     "{{challenge.name}}", bubblingMouseEvents: true
+                {% if challenge.is_weekly_challenge %}, icon: weeklyIcon {% endif %}}) // Custom marker for weekly challenges
+                .bindPopup( "<b>{{challenge.name}}</b>" +
+                            "<br>{{challenge.description}}" ).addTo(map);
+        {% endfor %}
+
+        // Returns the watcher ID and user marker in an array of len 2
+        watcher = startLocator(map);
+
+        map.invalidateSize();
+
+        {%for group in request.user.groups.all %}
+            {%if group.name == 'game_master' %}
+        devModeToggle(map, document.getElementById('devModeSwitch'));
+            {% endif %}
+        {% endfor %}
+    };
+
+
+</script>
+{% load static %}
+<script src="{% static '/scripts/mapfuncs.js' %}"></script>
+
+    
+ <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+   crossorigin=""></script>
+
+   {% endblock %}
+
+</div>
+</html>
+
