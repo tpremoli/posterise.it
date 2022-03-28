@@ -3,6 +3,6 @@
     {% if request.user.is_authenticated %}
         Run the app!!
     {% else %}
-        Login :/
+        <a href="{% url 'login' %}" class="btn btn-primary">Log in with Spotify</a>
     {% endif %}
 {% endblock %}
