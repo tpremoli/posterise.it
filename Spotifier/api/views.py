@@ -30,8 +30,6 @@ class CreatePolaroidView(APIView):
             is_album = serializer.data.get("is_album")
             time = datetime.time(minute=3,second=5)
 
-            print(creator,uri,time)
-
             polaroid = Polaroid(creator=creator, uri=uri, length=time, is_album=is_album)
             
             polaroid.save()
