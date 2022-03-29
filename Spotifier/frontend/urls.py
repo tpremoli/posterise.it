@@ -4,7 +4,8 @@ from .views import index
 
 urlpatterns = [
     path('', index), 
-#     path('login/', AuthURL.as_view(), name='login'),
+    path('about', index),
+    path('create-polaroid', index),
 #     path('redirect/', spotify_callback, name='redirect'),
 #     path('is-authenticated/', is_authenticated.as_view(), name='is_authenticated'),
 ]

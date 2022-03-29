@@ -5,11 +5,12 @@
 Polaroidizer is a simple web app that takes advantage of Spotify APIs in order to generate Pinterest-style polaroid posters, quickly and efficiently.
 
 ## Prerequisites:
-In the root directory run:
+In the root directory (/Spotifier) run:
 
     pip install -r requirements.txt
 
-Beyond that, npm package manager is necessary to run the javascript libraries:
+Beyond that, npm package manager is necessary to run the javascript libraries.
+In /Spotifier/Frontend:
 
     npm init -y
     npm i webpack webpack-cli --save-dev
@@ -19,6 +20,8 @@ Beyond that, npm package manager is necessary to run the javascript libraries:
     npm install @babel/plugin-proposal-class-properties
     npm install react-router-dom
     npm install @material-ui/icons
+
+To actually run it:
 
     npm run dev
 
