@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'polaroidizer.apps.PolaroidizerConfig',
     'frontend.apps.FrontendConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
