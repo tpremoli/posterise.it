@@ -50,11 +50,9 @@ export default class CreatePolaroid extends Component {
 
         console.log(requestOptions);
 
-        fetch("/api/create-polaroid", requestOptions).then((response) =>
-            response.text()
-        ).then((data) => console.log(data));
-
-
+        fetch("/api/create-polaroid", requestOptions)
+            .then((response) => response.text())
+            .then((data) => console.log(data));
     }
 
     authenticateSpotify() {

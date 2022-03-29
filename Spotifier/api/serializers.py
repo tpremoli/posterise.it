@@ -11,4 +11,4 @@ class PolaroidSerializer(serializers.ModelSerializer):
 class CreatePolaroidSerializer(serializers.ModelSerializer):
     class Meta:
         model = Polaroid
-        fields = ('creator','uri','is_album')
+        fields = ('uri','is_album')
