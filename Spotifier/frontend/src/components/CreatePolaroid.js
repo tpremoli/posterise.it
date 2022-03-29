@@ -16,9 +16,45 @@ export default class CreatePolaroid extends Component {
         super(props);
         this.state = {
             spotifyAuthenticated: false,
+            uri: "blank",
+            is_album: false
         }
+        this.handleURIChange = this.handleURIChange.bind(this);
+        this.handleIsAlbumChange = this.handleIsAlbumChange.bind(this);
+        this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         // this.authenticateSpotify();
+    }
+
+    handleURIChange(e) {
+        this.setState({
+            uri: e.target.value,
+        });
+    }
+
+    handleIsAlbumChange(e) {
+        this.setState({
+            is_album: e.target.value,
+        });
+    }
+
+    handleCreateButtonPressed() {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                uri: this.state.uri,
+                is_album: this.state.is_album
+            }),
+        };
+
+        console.log(requestOptions);
+
+        fetch("/api/create-polaroid", requestOptions).then((response) =>
+            response.text()
+        ).then((data) => console.log(data));
+
+
     }
 
     authenticateSpotify() {
@@ -57,11 +93,11 @@ export default class CreatePolaroid extends Component {
                         </FormHelperText>
                         <FormControlLabel control={<Checkbox defaultChecked />} label="Include Track Length" />
                         <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
-                        <TextField id="standard-basic" label="URI" variant="standard" />
+                        <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
                         <RadioGroup
                             row
                             defaultValue="false"
-                            onChange={this.handleGuestCanPauseChange}
+                            onChange={this.handleIsAlbumChange}
                         >
                             <FormControlLabel
                                 value="true"
@@ -71,12 +107,26 @@ export default class CreatePolaroid extends Component {
                             />
                             <FormControlLabel
                                 value="false"
-                                control={<Radio color="secondary" />}
+                                control={<Radio color="primary" />}
                                 label="Track"
                                 labelPlacement="bottom"
                             />
                         </RadioGroup>
                     </FormControl>
+                </Grid>
+                <Grid item xs={12} align="center">
+                    <Button
+                        color="primary"
+                        variant="contained"
+                        onClick={this.handleCreateButtonPressed}
+                    >
+                        Create Polaroid!
+                    </Button>
+                </Grid>
+                <Grid item xs={12} align="center">
+                    <Button color="secondary" variant="outlined" to="/" component={Link}>
+                        Back to home
+                    </Button>
                 </Grid>
             </Grid>
         );
