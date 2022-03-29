@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import CreatePolaroid
+from .views import PolaroidView
 
 urlpatterns = [
-    path('create-polaroid', CreatePolaroid.as_view()),
+    path('polaroid', PolaroidView.as_view()),
 ]
