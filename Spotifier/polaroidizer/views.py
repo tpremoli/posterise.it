@@ -1,40 +1,32 @@
-from __future__ import print_function
-from urllib import response
-from django.shortcuts import redirect, render
+from django.shortcuts import render, redirect
 from .credentials import REDIRECT_URI, CLIENT_SECRET, CLIENT_ID
 from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from requests import Request, post
-from .util import is_spotify_authenticated, update_or_create_user_tokens
-import random
-import spotipy
+from rest_framework import status
+from rest_framework.response import Response
+from .util import update_or_create_user_tokens, is_spotify_authenticated, get_user_tokens
 
 
 class AuthURL(APIView):
-    def get(self, request, format=None):
-        scopes = 'user-library-read playlist-read-private'
+    def get(self, request, fornat=None):
+        scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'
 
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,
             'response_type': 'code',
             'redirect_uri': REDIRECT_URI,
-            'client_id': CLIENT_ID,
+            'client_id': CLIENT_ID
         }).prepare().url
 
         return Response({'url': url}, status=status.HTTP_200_OK)
 
-class is_authenticated(APIView):
-    def get(self,request,format=None):
-        is_authenticated = is_spotify_authenticated(self.request.session.session_key)
-        return response({'status': is_authenticated}, status=status.HTTP_200_OK)
 
 def spotify_callback(request, format=None):
     code = request.GET.get('code')
     error = request.GET.get('error')
 
     response = post('https://accounts.spotify.com/api/token', data={
-        'grant_type' : 'authorization_code',
+        'grant_type': 'authorization_code',
         'code': code,
         'redirect_uri': REDIRECT_URI,
         'client_id': CLIENT_ID,
@@ -50,15 +42,14 @@ def spotify_callback(request, format=None):
     if not request.session.exists(request.session.session_key):
         request.session.create()
 
-    update_or_create_user_tokens(request.session.session_key, access_token, token_type, expires_in,refresh_token)
+    update_or_create_user_tokens(
+        request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
-    return redirect("frontend:")
-
-def home(request):
-    context = {}
-    return render(request, 'home.html', context)
+    return redirect('frontend:')
 
 
-def login(request):
-    context = {}
-    return render(request, 'login.html', context)
+class IsAuthenticated(APIView):
+    def get(self, request, format=None):
+        is_authenticated = is_spotify_authenticated(
+            self.request.session.session_key)
+        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
