@@ -1,0 +1,10 @@
+Run these scripts in command line to run the test server
+
+-- CMD 1: --
+cd spotifier
+python manage.py runserver
+
+-- CMD 2: --
+cd spotifier
+cd frontend
+npm run dev
