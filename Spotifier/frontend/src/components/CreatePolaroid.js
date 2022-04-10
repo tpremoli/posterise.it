@@ -9,6 +9,8 @@ import FormControl from "@material-ui/core/FormControl";
 import Checkbox from '@material-ui/core/Checkbox';
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import { Collapse } from "@material-ui/core";
+import Alert from "@material-ui/core/Alert";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 export default class CreatePolaroid extends Component {
@@ -17,7 +19,8 @@ export default class CreatePolaroid extends Component {
         this.state = {
             spotifyAuthenticated: false,
             uri: "blank",
-            is_album: false
+            errorMsg: "",
+            is_album: false //Convert to type with string
         }
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleIsAlbumChange = this.handleIsAlbumChange.bind(this);
@@ -48,7 +51,22 @@ export default class CreatePolaroid extends Component {
             }),
         };
 
-        fetch("/api/create-polaroid", requestOptions)
+        var id;
+
+        if (uri.startsWith("spotify:album:")) {
+        } else if (uri.startsWith("spotify:track:")) {
+
+        } else if (uri.startsWith("spotify:playlist:")) {
+
+        } else if (uri.startsWith("spotify:artist:")) {
+
+        } else {
+            this.setState({
+                errorMsg: "Invalid URI!",
+            });
+        }
+
+        fetch("/polaroidize/" + id, requestOptions)
             .then((response) => response.text())
             .then((data) => console.log(data));
     }
@@ -75,6 +93,20 @@ export default class CreatePolaroid extends Component {
     render() {
         return (
             <Grid container spacing={1}>
+                <Grid item xs={12} align="center">
+                    <Collapse
+                        in={this.state.errorMsg != ""}
+                    >
+                        <Alert
+                            severity="error"
+                            onClose={() => {
+                                this.setState({ errorMsg: "" });
+                            }}
+                        >
+                            {this.state.errorMsg}
+                        </Alert>
+                    </Collapse>
+                </Grid>
                 <Grid item xs={12} align="center">
                     <Typography component="h4" variant="h4">
                         Create A Polaroid!

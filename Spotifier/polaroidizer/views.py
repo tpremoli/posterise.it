@@ -54,3 +54,11 @@ class IsAuthenticated(APIView):
             self.request.session.session_key
         )
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+    
+class Polaroidize(APIView):
+    def get(self, request, format=None, **kwargs):
+        is_authenticated = is_spotify_authenticated(
+            self.request.session.session_key
+        )
+
+        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
