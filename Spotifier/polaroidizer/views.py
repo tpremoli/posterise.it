@@ -45,7 +45,7 @@ def spotify_callback(request, format=None):
     update_or_create_user_tokens(
         request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
-    return redirect('frontend:')
+    return redirect('/create-polaroid')
 
 
 class IsAuthenticated(APIView):
@@ -54,7 +54,8 @@ class IsAuthenticated(APIView):
             self.request.session.session_key
         )
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
-    
+
+
 class Polaroidize(APIView):
     def get(self, request, format=None, **kwargs):
         is_authenticated = is_spotify_authenticated(
@@ -64,9 +65,16 @@ class Polaroidize(APIView):
         if(is_authenticated):
             endpoint = request.GET.get('type') + "/" + request.GET.get('id')
 
-            response = execute_spotify_api_request(self.request.session.session_key, endpoint, post_=False, put_=False)
+            response = execute_spotify_api_request(
+                self.request.session.session_key, endpoint, post_=False, put_=False)
 
+            if "error" in response:
+                statuscode = {"status": response["error"]["status"], "errorMsg":response["error"]["message"]}
+                response.update(statuscode)
+                return Response(response, status=status.HTTP_404_NOT_FOUND)
+
+            statuscode = {"status": 200}
+            response.update(statuscode)
             return Response(response, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
-

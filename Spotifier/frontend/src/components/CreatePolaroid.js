@@ -12,6 +12,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import { Collapse } from "@material-ui/core";
 import Alert from "@material-ui/core/Alert";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+// import domtoimage from 'dom-to-image';
 
 export default class CreatePolaroid extends Component {
     constructor(props) {
@@ -21,6 +22,7 @@ export default class CreatePolaroid extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
+            imgURL: "",
         }
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
@@ -79,8 +81,24 @@ export default class CreatePolaroid extends Component {
 
         if (type != "blank") {
             fetch("/polaroidize/?id=" + id + "&type=" + type, requestOptions)
-                .then((response) => response.text())
-                .then((data) => console.log(data));
+                .then((response) => response.json())
+                .then((response) => {
+                    // Handle passed or failed responses
+                    console.log(response);
+                    if (response.status == 200) {
+                        // print(response);
+
+                        this.setState({
+                            imgURL: response.images[0].url,
+                        });
+
+                    } else {
+                        this.setState({
+                            errorMsg: "Error: " + response.errorMsg,
+                            imgURL: "",
+                        });
+                    }
+                });
         }
     }
 
@@ -180,6 +198,11 @@ export default class CreatePolaroid extends Component {
                     <Button color="secondary" variant="outlined" to="/" component={Link}>
                         Back to home
                     </Button>
+                </Grid>
+                <Grid item xs={12} align="center">
+                    <img src={this.state.imgURL}>
+
+                    </img>
                 </Grid>
             </Grid>
         );

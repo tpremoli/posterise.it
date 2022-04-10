@@ -25,6 +25,7 @@ def update_or_create_user_tokens(session_id, access_token, token_type, expires_i
         tokens.refresh_token = refresh_token
         tokens.expires_in = expires_in
         tokens.token_type = token_type
+
         tokens.save(update_fields=['access_token',
                                    'refresh_token', 'expires_in', 'token_type'])
     else:
@@ -79,4 +80,4 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
     try:
         return response.json()
     except:
-        return {'Error': 'Error executing Spotify API request'}
+        return {'error': 'Error executing Spotify API request'}
