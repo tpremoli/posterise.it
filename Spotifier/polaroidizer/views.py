@@ -9,7 +9,7 @@ from .util import update_or_create_user_tokens, is_spotify_authenticated, get_us
 
 class AuthURL(APIView):
     def get(self, request, format=None):
-        scopes = 'user-read-playback-state user-modify-playback-state user-read-currently-playing'
+        scopes = 'user-top-read'
 
         url = Request('GET', 'https://accounts.spotify.com/authorize', params={
             'scope': scopes,
