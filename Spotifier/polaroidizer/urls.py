@@ -5,5 +5,5 @@ urlpatterns = [
     path('get-auth-url', AuthURL.as_view()),
     path('redirect', spotify_callback),
     path('is-authenticated', IsAuthenticated.as_view()),
-    path('polaroidize/<str:selectionID>', Polaroidize.as_view())
+    path('polaroidize/', Polaroidize.as_view())
 ]

@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from requests import Request, post
 from rest_framework import status
 from rest_framework.response import Response
-from .util import update_or_create_user_tokens, is_spotify_authenticated, get_user_tokens
+from .util import update_or_create_user_tokens, is_spotify_authenticated, get_user_tokens, execute_spotify_api_request
 
 
 class AuthURL(APIView):
@@ -61,5 +61,12 @@ class Polaroidize(APIView):
             self.request.session.session_key
         )
 
-        return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+        if(is_authenticated):
+            endpoint = request.GET.get('type') + "/" + request.GET.get('id')
+
+            response = execute_spotify_api_request(self.request.session.session_key, endpoint, post_=False, put_=False)
+
+            return Response(response, status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
 

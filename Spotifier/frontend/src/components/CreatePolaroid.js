@@ -21,7 +21,6 @@ export default class CreatePolaroid extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
-            type: "blank",
         }
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
@@ -38,50 +37,51 @@ export default class CreatePolaroid extends Component {
     handleCreateButtonPressed() {
         const requestOptions = {
             method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
         };
 
         var id;
+        var type = "blank";
         var uri = this.state.uri;
 
         if (uri.startsWith("spotify:album:")) {
             id = uri.substring(14)
+            type = "albums";
             this.setState({
-                type: "album",
                 successMsg: "Selected album!",
             });
 
         } else if (uri.startsWith("spotify:track:")) {
             id = uri.substring(14)
+            type = "tracks";
             this.setState({
-                type: "track",
                 successMsg: "Selected track!",
             });
 
         } else if (uri.startsWith("spotify:playlist:")) {
             id = uri.substring(17)
+            type = "playlists";
             this.setState({
-                type: "playlist",
                 successMsg: "Selected playlist!",
             });
 
         } else if (uri.startsWith("spotify:artist:")) {
-            id = uri.substring(15)
+            id = uri.substring(15);
+            type = "artists";
             this.setState({
-                type: "artist",
                 successMsg: "Selected artist!",
             });
 
         } else {
             this.setState({
-                type: "blank",
                 errorMsg: "Invalid URI!",
             });
         }
 
-        fetch("/polaroidize/" + id, requestOptions)
-            .then((response) => response.text())
-            .then((data) => console.log(data));
+        if (type != "blank") {
+            fetch("/polaroidize/?id=" + id + "&type=" + type, requestOptions)
+                .then((response) => response.text())
+                .then((data) => console.log(data));
+        }
     }
 
     authenticateSpotify() {
