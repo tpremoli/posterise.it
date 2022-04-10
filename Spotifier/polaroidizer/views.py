@@ -62,3 +62,4 @@ class Polaroidize(APIView):
         )
 
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
+

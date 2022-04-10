@@ -20,10 +20,10 @@ export default class CreatePolaroid extends Component {
             spotifyAuthenticated: false,
             uri: "blank",
             errorMsg: "",
-            is_album: false //Convert to type with string
+            successMsg: "",
+            type: "blank",
         }
         this.handleURIChange = this.handleURIChange.bind(this);
-        this.handleIsAlbumChange = this.handleIsAlbumChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
@@ -35,33 +35,46 @@ export default class CreatePolaroid extends Component {
         });
     }
 
-    handleIsAlbumChange(e) {
-        this.setState({
-            is_album: e.target.value,
-        });
-    }
-
     handleCreateButtonPressed() {
         const requestOptions = {
-            method: 'POST',
+            method: 'GET',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                uri: this.state.uri,
-                is_album: this.state.is_album
-            }),
         };
 
         var id;
+        var uri = this.state.uri;
 
         if (uri.startsWith("spotify:album:")) {
+            id = uri.substring(14)
+            this.setState({
+                type: "album",
+                successMsg: "Selected album!",
+            });
+
         } else if (uri.startsWith("spotify:track:")) {
+            id = uri.substring(14)
+            this.setState({
+                type: "track",
+                successMsg: "Selected track!",
+            });
 
         } else if (uri.startsWith("spotify:playlist:")) {
+            id = uri.substring(17)
+            this.setState({
+                type: "playlist",
+                successMsg: "Selected playlist!",
+            });
 
         } else if (uri.startsWith("spotify:artist:")) {
+            id = uri.substring(15)
+            this.setState({
+                type: "artist",
+                successMsg: "Selected artist!",
+            });
 
         } else {
             this.setState({
+                type: "blank",
                 errorMsg: "Invalid URI!",
             });
         }
@@ -104,6 +117,18 @@ export default class CreatePolaroid extends Component {
                             }}
                         >
                             {this.state.errorMsg}
+                        </Alert>
+                    </Collapse>
+                    <Collapse
+                        in={this.state.successMsg != ""}
+                    >
+                        <Alert
+                            severity="success"
+                            onClose={() => {
+                                this.setState({ successMsg: "" });
+                            }}
+                        >
+                            {this.state.successMsg}
                         </Alert>
                     </Collapse>
                 </Grid>
