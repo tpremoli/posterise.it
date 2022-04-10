@@ -48,7 +48,6 @@ export default class CreatePolaroid extends Component {
             }),
         };
 
-
         fetch("/api/create-polaroid", requestOptions)
             .then((response) => response.text())
             .then((data) => console.log(data));

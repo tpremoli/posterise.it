@@ -5,7 +5,7 @@ from .credentials import CLIENT_ID, CLIENT_SECRET
 from requests import post, put, get
 
 
-BASE_URL = "https://api.spotify.com/v1/me/"
+BASE_URL = "https://api.spotify.com/v1/"
 
 
 def get_user_tokens(session_id):
@@ -39,6 +39,9 @@ def is_spotify_authenticated(session_id):
         expiry = tokens.expires_in
         if expiry <= timezone.now():
             refresh_spotify_token(session_id)
+
+        print(execute_spotify_api_request(
+            session_id, 'albums/3a0UOgDWw2pTajw85QPMiz'))
 
         return True
 
@@ -75,6 +78,10 @@ def execute_spotify_api_request(session_id, endpoint, post_=False, put_=False):
         put(BASE_URL+endpoint, headers=headers)
 
     response = get(BASE_URL+endpoint, {}, headers=headers)
+
+    print(BASE_URL+endpoint)
+
+    print(response)
 
     try:
         return response.json()
