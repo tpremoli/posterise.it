@@ -23,7 +23,7 @@ export default class CreatePolaroid extends Component {
         this.handleIsAlbumChange = this.handleIsAlbumChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
-        // this.authenticateSpotify();
+        this.authenticateSpotify();
     }
 
     handleURIChange(e) {
@@ -48,7 +48,7 @@ export default class CreatePolaroid extends Component {
             }),
         };
 
-        console.log(requestOptions);
+        // console.log(requestOptions);
 
         fetch("/api/create-polaroid", requestOptions)
             .then((response) => response.text())
@@ -56,16 +56,16 @@ export default class CreatePolaroid extends Component {
     }
 
     authenticateSpotify() {
-        fetch("/polaroidizer/is-authenticated").then(res => res.text())
+        fetch("/is-authenticated").then(res => res.text())
             .then(text => console.log(text));
 
-        fetch("/polaroidizer/is-authenticated")
+        fetch("/is-authenticated")
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ spotifyAuthenticated: data.status });
-                console.log(data.status);
+                // console.log(data.status);
                 if (!data.status) {
-                    fetch("/polaroidizer/get-auth-url")
+                    fetch("/get-auth-url")
                         .then((response) => response.json())
                         .then((data) => {
                             window.location.replace(data.url);

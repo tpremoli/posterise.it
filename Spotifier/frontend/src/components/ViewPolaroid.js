@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-export default class AboutPage extends Component {
+export default class ViewPolaroid extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -8,6 +8,7 @@ export default class AboutPage extends Component {
             is_album: false
         };
         this.polaroidID = this.props.match.params.polaroidID;
+        // console.log(this.props.match.params);
     }
 
     render() {
