@@ -7,8 +7,6 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Checkbox from '@material-ui/core/Checkbox';
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
 import { Collapse } from "@material-ui/core";
 import Alert from "@material-ui/core/Alert";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -102,9 +100,6 @@ export default class CreatePolaroid extends Component {
     }
 
     authenticateSpotify() {
-        fetch("/is-authenticated").then(res => res.text())
-            .then(text => console.log(text));
-
         fetch("/is-authenticated")
             .then((response) => response.json())
             .then((data) => {
@@ -164,24 +159,7 @@ export default class CreatePolaroid extends Component {
                         <FormControlLabel control={<Checkbox defaultChecked />} label="Include Track Length" />
                         <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
                         <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
-                        <RadioGroup
-                            row
-                            defaultValue="false"
-                            onChange={this.handleIsAlbumChange}
-                        >
-                            <FormControlLabel
-                                value="true"
-                                control={<Radio color="primary" />}
-                                label="Album"
-                                labelPlacement="bottom"
-                            />
-                            <FormControlLabel
-                                value="false"
-                                control={<Radio color="primary" />}
-                                label="Track"
-                                labelPlacement="bottom"
-                            />
-                        </RadioGroup>
+                        {/* TODO: Create a ? next to this with information on URI w/ gifs */}
                     </FormControl>
                 </Grid>
                 <Grid item xs={12} align="center">
