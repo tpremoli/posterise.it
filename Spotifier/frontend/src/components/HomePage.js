@@ -24,7 +24,6 @@ export default class HomePage extends Component {
                     </Route>
                     <Route path="/about" component={AboutPage} />
                     <Route path="/create-polaroid" component={CreatePolaroid} />
-                    <Route path="/polaroid/:polaroidID" component={ViewPolaroid} />
                 </Switch>
             </Router>
         );
