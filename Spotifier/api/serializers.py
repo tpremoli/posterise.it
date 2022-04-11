@@ -1,14 +1,12 @@
 from rest_framework import serializers
-from .models import Polaroid
+
+# Create serializers here
+# TODO: Create report serializer (EG below)
 
 
-class PolaroidSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Polaroid
-        fields = ('id', 'creator', 'uri', 'name', 'is_album',
-                  'artist', 'length')
+# class PolaroidSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Polaroid
+#         fields = ('id', 'creator', 'uri', 'name', 'is_album',
+#                   'artist', 'length')
 
-class CreatePolaroidSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Polaroid
-        fields = ('uri','is_album')

@@ -80,6 +80,7 @@ export default class CreatePolaroid extends Component {
         }
 
         if (type != "blank") {
+            // Execute API calls and handle data
             fetch("/polaroidize/?id=" + id + "&type=" + type, requestOptions)
                 .then((response) => response.json())
                 .then((response) => {
@@ -87,11 +88,9 @@ export default class CreatePolaroid extends Component {
                     console.log(response);
                     if (response.status == 200) {
                         // print(response);
-
                         this.setState({
                             imgURL: response.images[0].url,
                         });
-
                     } else {
                         this.setState({
                             errorMsg: "Error: " + response.errorMsg,

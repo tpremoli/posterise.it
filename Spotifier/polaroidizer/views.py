@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from .util import update_or_create_user_tokens, is_spotify_authenticated, get_user_tokens, execute_spotify_api_request
 
-
+# API Auth
 class AuthURL(APIView):
     def get(self, request, format=None):
         scopes = 'user-top-read'
@@ -20,7 +20,7 @@ class AuthURL(APIView):
 
         return Response({'url': url}, status=status.HTTP_200_OK)
 
-
+# API Auth
 def spotify_callback(request, format=None):
     code = request.GET.get('code')
     error = request.GET.get('error')
@@ -47,7 +47,7 @@ def spotify_callback(request, format=None):
 
     return redirect('/create-polaroid')
 
-
+# API auth
 class IsAuthenticated(APIView):
     def get(self, request, format=None):
         is_authenticated = is_spotify_authenticated(
@@ -55,7 +55,7 @@ class IsAuthenticated(APIView):
         )
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
 
-
+# Executes spotify api requests
 class Polaroidize(APIView):
     def get(self, request, format=None, **kwargs):
         is_authenticated = is_spotify_authenticated(
@@ -68,8 +68,10 @@ class Polaroidize(APIView):
             response = execute_spotify_api_request(
                 self.request.session.session_key, endpoint, post_=False, put_=False)
 
+            # Probably not best practice
             if "error" in response:
-                statuscode = {"status": response["error"]["status"], "errorMsg":response["error"]["message"]}
+                statuscode = {
+                    "status": response["error"]["status"], "errorMsg": response["error"]["message"]}
                 response.update(statuscode)
                 return Response(response, status=status.HTTP_404_NOT_FOUND)
 
