@@ -16,7 +16,7 @@ In /Spotifier/Frontend:
     npm i webpack webpack-cli --save-dev
     npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
     npm i react react-dom --save-dev
-    npm install dom-to-image
+    <!-- npm install dom-to-image -->
     npm install @material-ui/core
     npm install @material-ui/core@next
     npm install @material-ui/lab@next

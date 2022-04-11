@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import AboutPage from "./AboutPage";
 import CreatePolaroid from "./CreatePolaroid";
-import ViewPolaroid from "./ViewPolaroid";
 import {
     BrowserRouter as Router,
     Switch,

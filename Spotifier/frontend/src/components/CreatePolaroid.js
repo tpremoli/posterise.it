@@ -7,9 +7,11 @@ import TextField from "@material-ui/core/TextField";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import Checkbox from '@material-ui/core/Checkbox';
+import Tooltip from '@material-ui/core/Tooltip';
 import { Collapse } from "@material-ui/core";
 import Alert from "@material-ui/core/Alert";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import ScrollDialog from "./Dialog.js";
 // import domtoimage from 'dom-to-image';
 
 export default class CreatePolaroid extends Component {
@@ -115,6 +117,8 @@ export default class CreatePolaroid extends Component {
             });
     }
 
+
+
     render() {
         return (
             <Grid container spacing={1}>
@@ -151,17 +155,29 @@ export default class CreatePolaroid extends Component {
                 </Grid>
                 <Grid item xs={12} align="center">
                     <FormControl component="fieldset">
+
                         <FormHelperText>
                             <div align="center">
                                 Options
                             </div>
                         </FormHelperText>
-                        <FormControlLabel control={<Checkbox defaultChecked />} label="Include Track Length" />
-                        <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
+
+                        <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
+                            <FormControlLabel control={<Checkbox defaultChecked />} label="Include Length" />
+                        </Tooltip>
+                        <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
+                            <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
+                        </Tooltip>
+                        <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
+                            <FormControlLabel control={<Checkbox defaultChecked />} label="Include Remastered" />
+                        </Tooltip>
                         <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
-                        {/* TODO: Create a ? next to this with information on URI w/ gifs */}
+
+                        <ScrollDialog />
+
                     </FormControl>
                 </Grid>
+
                 <Grid item xs={12} align="center">
                     <Button
                         color="primary"
@@ -185,3 +201,4 @@ export default class CreatePolaroid extends Component {
         );
     }
 }
+
