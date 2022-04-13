@@ -3,7 +3,7 @@ import AboutPage from "./AboutPage";
 import CreatePolaroid from "./CreatePolaroid";
 import {
     BrowserRouter as Router,
-    Switch,
+    Routes,
     Route,
     Link,
     Redirect,
@@ -17,13 +17,16 @@ export default class HomePage extends Component {
     render() {
         return (
             <Router>
-                <Switch>
-                    <Route exact path="/">
-                        <p>This is the home page</p>
+                <Routes>
+                    <Route exact path="/" element={
+                        <p>
+                            This is the home page
+                        </p>
+                    } >
                     </Route>
-                    <Route path="/about" component={AboutPage} />
-                    <Route path="/create-polaroid" component={CreatePolaroid} />
-                </Switch>
+                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/create-polaroid" element={<CreatePolaroid />} />
+                </Routes>
             </Router>
         );
     }

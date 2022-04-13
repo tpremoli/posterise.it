@@ -1,16 +1,16 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
-import Checkbox from '@material-ui/core/Checkbox';
-import Tooltip from '@material-ui/core/Tooltip';
-import { Collapse } from "@material-ui/core";
-import Alert from "@material-ui/core/Alert";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import FormHelperText from "@mui/material/FormHelperText";
+import FormControl from "@mui/material/FormControl";
+import Checkbox from '@mui/material/Checkbox';
+import Tooltip from '@mui/material/Tooltip';
+import { Collapse } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import ScrollDialog from "./URIHelpDialog.js";
 // import domtoimage from 'dom-to-image';
 
@@ -157,9 +157,9 @@ export default class CreatePolaroid extends Component {
                     <FormControl component="fieldset">
 
                         <FormHelperText>
-                            <div align="center">
+                            <span align="center">
                                 Options
-                            </div>
+                            </span>
                         </FormHelperText>
 
                         <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">

@@ -1,12 +1,12 @@
 import * as React from 'react';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import { IconButton } from '@material-ui/core';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import { IconButton } from '@mui/material/IconButton';
 
 export default function ScrollDialog() {
     const [open, setOpen] = React.useState(false);
@@ -47,8 +47,9 @@ export default function ScrollDialog() {
                         id="scroll-dialog-description"
                         ref={descriptionElementRef}
                         tabIndex={-1}
+                        component="div"
                     >
-                        <Typography variant="h5" component="div" gutterBottom>
+                        <Typography variant="h5" component="span" gutterBottom>
                             Hello!
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>

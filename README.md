@@ -12,19 +12,17 @@ In the root directory (/Spotifier) run:
 Beyond that, npm package manager is necessary to run the javascript libraries.
 In /Spotifier/Frontend:
 
-    npm init -y
     npm i webpack webpack-cli --save-dev
     npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
     npm i react react-dom --save-dev
-    <!-- npm install dom-to-image -->
-    npm install @material-ui/core
-    npm install @material-ui/core@next
-    npm install @material-ui/lab@next
-    npm install @emotion/react
-    npm install @emotion/styled
-    npm install @babel/plugin-proposal-class-properties
     npm install react-router-dom
-    npm install @material-ui/icons
+    npm install @mui/material @emotion/react @emotion/styled
+    npm install @babel/plugin-proposal-class-properties
+    
+    <!-- npm install @material-ui/core@next -->
+    <!-- npm install @material-ui/lab@next -->
+    <!-- npm install dom-to-image -->
+
 
 To actually run it:
 
