@@ -8,7 +8,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
-import { Collapse } from "@mui/material";
+import { Card, Collapse, Paper } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ScrollDialog from "./URIHelpDialog.js";
@@ -148,50 +148,50 @@ export default class CreatePolaroid extends Component {
                         </Alert>
                     </Collapse>
                 </Grid>
-                <Grid item xs={12} align="center">
-                    <Typography component="h4" variant="h4">
-                        Create A Polaroid!
-                    </Typography>
-                </Grid>
-                <Grid item xs={12} align="center">
-                    <FormControl component="fieldset">
+                    <Grid item xs={12} align="center">
+                        <Typography component="h4" variant="h4">
+                            Create A Polaroid!
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={12} align="center">
+                        <FormControl component="fieldset">
 
-                        <FormHelperText>
-                            <span align="center">
-                                Options
-                            </span>
-                        </FormHelperText>
+                            <FormHelperText>
+                                <span align="center">
+                                    Options
+                                </span>
+                            </FormHelperText>
 
-                        <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
-                            <FormControlLabel control={<Checkbox defaultChecked />} label="Include Length" />
-                        </Tooltip>
-                        <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
-                            <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
-                        </Tooltip>
-                        <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
-                            <FormControlLabel control={<Checkbox defaultChecked />} label="Include Remastered" />
-                        </Tooltip>
-                        <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
+                            <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
+                                <FormControlLabel control={<Checkbox defaultChecked />} label="Include Length" />
+                            </Tooltip>
+                            <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
+                                <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
+                            </Tooltip>
+                            <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
+                                <FormControlLabel control={<Checkbox defaultChecked />} label="Include Remastered" />
+                            </Tooltip>
+                            <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
 
-                        <ScrollDialog />
+                            <ScrollDialog />
 
-                    </FormControl>
-                </Grid>
+                        </FormControl>
+                    </Grid>
 
-                <Grid item xs={12} align="center">
-                    <Button
-                        color="primary"
-                        variant="contained"
-                        onClick={this.handleCreateButtonPressed}
-                    >
-                        Create Polaroid!
-                    </Button>
-                </Grid>
-                <Grid item xs={12} align="center">
-                    <Button color="secondary" variant="outlined" to="/" component={Link}>
-                        Back to home
-                    </Button>
-                </Grid>
+                    <Grid item xs={12} align="center">
+                        <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={this.handleCreateButtonPressed}
+                        >
+                            Create Polaroid!
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} align="center">
+                        <Button color="secondary" variant="outlined" to="/" component={Link}>
+                            Back to home
+                        </Button>
+                    </Grid>
                 <Grid item xs={12} align="center">
                     <img src={this.state.imgURL}>
 

@@ -16,9 +16,9 @@ In /Spotifier/Frontend:
     npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
     npm i react react-dom --save-dev
     npm install react-router-dom
-    npm install @mui/material @emotion/react @emotion/styled
+    npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
     npm install @babel/plugin-proposal-class-properties
-    
+
     <!-- npm install @material-ui/core@next -->
     <!-- npm install @material-ui/lab@next -->
     <!-- npm install dom-to-image -->

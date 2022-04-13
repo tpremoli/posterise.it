@@ -1,6 +1,8 @@
 import React, { Component } from "react";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { createRoot } from 'react-dom/client';
 import HomePage from "./HomePage";
+import { CssBaseline } from "@mui/material";
 
 export default class App extends Component {
     constructor(props) {
@@ -9,12 +11,37 @@ export default class App extends Component {
 
     render() {
         return (
-            <div>
-                <HomePage />
-            </div>
+            <ThemeProvider theme={theme}>
+                <CssBaseline>
+                    <HomePage />
+                </CssBaseline>
+            </ThemeProvider>
         );
     }
 }
+
+
+const theme = createTheme({
+    palette: {
+        type: 'light',
+        primary: {
+            main: '#b79302',
+        },
+        secondary: {
+            main: '#d61216',
+        },
+        background: {
+            default: '#d0ccc4',
+            paper: '#f7f2eb',
+        },
+        error: {
+            main: '#8c0f05',
+        },
+        info: {
+            main: '#508ebf',
+        },
+    },
+});
 
 const appDiv = document.getElementById("app");
 const root = createRoot(appDiv);

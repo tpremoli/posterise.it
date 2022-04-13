@@ -6,7 +6,8 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { IconButton } from '@mui/material/IconButton';
+import IconButton from '@mui/material/IconButton';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 export default function ScrollDialog() {
     const [open, setOpen] = React.useState(false);
@@ -33,7 +34,7 @@ export default function ScrollDialog() {
 
     return (
         <div>
-            <Button onClick={handleClickOpen('paper')}>What's this?</Button>
+            <Button onClick={handleClickOpen('paper')} color="info">What's this?</Button>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -48,6 +49,7 @@ export default function ScrollDialog() {
                         ref={descriptionElementRef}
                         tabIndex={-1}
                         component="div"
+                        color="primary"
                     >
                         <Typography variant="h5" component="span" gutterBottom>
                             Hello!
@@ -74,7 +76,10 @@ export default function ScrollDialog() {
                             Here's an example of a URI.
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            Album: <code>spotify:album:0ETFjACtuP2ADo6LFhL6HN</code>
+                            Album: <code>spotify:album:0ETFjACtuP2ADo6LFhL6HN </code>
+                            {/* <IconButton aria-label="copy-sample-album" > */}
+                                {/* <ContentCopyIcon color="secondary" /> */}
+                            {/* </IconButton> */}
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
                             Track: <code>spotify:track:4cOdK2wGLETKBW3PvgPWqT</code>
@@ -83,8 +88,9 @@ export default function ScrollDialog() {
                             Artist: <code>spotify:artist:0k17h0D3J5VfsdmQ1iZtE9</code>
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            Playlist: <code>spotify:playlist:2DFRAWTSAuiqdikofkLJ3F</code> 
+                            Playlist: <code>spotify:playlist:2DFRAWTSAuiqdikofkLJ3F</code>
                         </Typography>
+
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
