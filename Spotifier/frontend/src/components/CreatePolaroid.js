@@ -155,7 +155,7 @@ export default class CreatePolaroid extends Component {
                     xs={12} 
                     align="center"
                 >
-                    <Paper xs={1} component={Grid}>
+                    <Paper pt={6} xs={3} component={Grid}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -186,7 +186,7 @@ export default class CreatePolaroid extends Component {
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} align="center">
+                        <Grid item xs={12} pb={2} align="center">
                             <Button
                                 color="primary"
                                 variant="contained"
@@ -195,7 +195,7 @@ export default class CreatePolaroid extends Component {
                                 Create Polaroid!
                             </Button>
                         </Grid>
-                        <Grid item xs={12} align="center">
+                        <Grid item xs={12} pb={6} align="center">
                             <Button color="secondary" variant="outlined" to="/" component={Link}>
                                 Back to home
                             </Button>
