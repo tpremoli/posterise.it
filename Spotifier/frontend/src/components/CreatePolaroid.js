@@ -8,7 +8,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
-import { Card, Collapse, Paper } from "@mui/material";
+import { Collapse, Paper } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ScrollDialog from "./URIHelpDialog.js";
@@ -89,7 +89,7 @@ export default class CreatePolaroid extends Component {
                     if (response.status == 200) {
                         // print(response);
                         this.setState({
-                            imgURL: response.images[0].url,
+                            imgURL: response.images[0].url, //imgURL is different for tracks
                         });
                     } else {
                         this.setState({
@@ -127,6 +127,8 @@ export default class CreatePolaroid extends Component {
                         in={this.state.errorMsg != ""}
                     >
                         <Alert
+                            variant="filled"
+                            color="error"
                             severity="error"
                             onClose={() => {
                                 this.setState({ errorMsg: "" });
@@ -139,6 +141,8 @@ export default class CreatePolaroid extends Component {
                         in={this.state.successMsg != ""}
                     >
                         <Alert
+                            variant="filled"
+                            color="success"
                             severity="success"
                             onClose={() => {
                                 this.setState({ successMsg: "" });
@@ -151,11 +155,11 @@ export default class CreatePolaroid extends Component {
                 <Grid
                     alignItems="center"
                     justify="center"
-                    item 
-                    xs={12} 
+                    item
+                    xs={12}
                     align="center"
                 >
-                    <Paper pt={6} xs={3} component={Grid}>
+                    <Paper item pt={6} xs={3} component={Grid}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -164,10 +168,8 @@ export default class CreatePolaroid extends Component {
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <FormHelperText>
-                                    <span align="center">
-                                        Options
-                                    </span>
+                                <FormHelperText style={{ textAlign: "center" }}>
+                                    Options
                                 </FormHelperText>
 
                                 <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">

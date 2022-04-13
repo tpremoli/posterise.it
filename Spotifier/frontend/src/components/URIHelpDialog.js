@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
+import Tooltip from '@mui/material/Tooltip';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -49,10 +50,10 @@ export default function ScrollDialog() {
                         ref={descriptionElementRef}
                         tabIndex={-1}
                         component="div"
-                        color="primary"
+                        color="text"
                     >
-                        <Typography variant="h5" component="span" gutterBottom>
-                            Hello!
+                        <Typography variant="h5" component="span" gutterBottom color="primary">
+                            <b>Hello!</b>
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
                             A URI is a <b>Unique Resource Identifier.</b>It can be used to identify a resource on Spotify!
@@ -73,22 +74,63 @@ export default function ScrollDialog() {
                             Paste it in the text box to create a Polaroid!
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            Here's an example of a URI.
+                            Here's a few examples:
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
+
+                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                                <IconButton aria-label="copy-sample-album"
+                                    onClick={() =>
+                                        navigator.clipboard.writeText("spotify:album:0ETFjACtuP2ADo6LFhL6HN")
+                                    }
+                                >
+                                    <ContentCopyIcon color="primary" />
+                                </IconButton>
+                            </Tooltip>
                             Album: <code>spotify:album:0ETFjACtuP2ADo6LFhL6HN </code>
-                            {/* <IconButton aria-label="copy-sample-album" > */}
-                                {/* <ContentCopyIcon color="secondary" /> */}
-                            {/* </IconButton> */}
+
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
+
+                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                                <IconButton aria-label="copy-sample-album"
+                                    onClick={() =>
+                                        navigator.clipboard.writeText("spotify:track:4cOdK2wGLETKBW3PvgPWqT")
+                                    }
+                                >
+                                    <ContentCopyIcon color="primary" />
+                                </IconButton>
+                            </Tooltip>
                             Track: <code>spotify:track:4cOdK2wGLETKBW3PvgPWqT</code>
+
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
+
+                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                                <IconButton aria-label="copy-sample-album"
+                                    onClick={() =>
+                                        navigator.clipboard.writeText("spotify:artist:0k17h0D3J5VfsdmQ1iZtE9")
+                                    }
+                                >
+                                    <ContentCopyIcon color="primary" />
+                                </IconButton>
+                            </Tooltip>
                             Artist: <code>spotify:artist:0k17h0D3J5VfsdmQ1iZtE9</code>
+
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
+
+                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                                <IconButton aria-label="copy-sample-album"
+                                    onClick={() =>
+                                        navigator.clipboard.writeText("spotify:playlist:2DFRAWTSAuiqdikofkLJ3F")
+                                    }
+                                >
+                                    <ContentCopyIcon color="primary" />
+                                </IconButton>
+                            </Tooltip>
                             Playlist: <code>spotify:playlist:2DFRAWTSAuiqdikofkLJ3F</code>
+
                         </Typography>
 
                     </DialogContentText>
@@ -99,4 +141,9 @@ export default function ScrollDialog() {
             </Dialog>
         </div>
     );
+
+    function copyText(uriString) {
+        navigator.clipboard.writeText(uriString);
+    }
 }
+
