@@ -11,7 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { Collapse } from "@material-ui/core";
 import Alert from "@material-ui/core/Alert";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import ScrollDialog from "./Dialog.js";
+import ScrollDialog from "./URIHelpDialog.js";
 // import domtoimage from 'dom-to-image';
 
 export default class CreatePolaroid extends Component {
