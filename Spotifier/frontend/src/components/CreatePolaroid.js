@@ -93,7 +93,7 @@ export default class CreatePolaroid extends Component {
                             imgURL: response.images[0].url, //imgURL is different for tracks
                         });
 
-                        this.paintImg();
+                        this.paintImg(response);
 
                     } else {
                         this.setState({
@@ -121,12 +121,86 @@ export default class CreatePolaroid extends Component {
             });
     }
 
-    paintImg() {
+    paintImg(response) {
         var canvas = document.getElementById("polaroid-canvas");
-        var canvasState = canvas.getContext("2d");
-        var img = document.getElementById("polaroid-cover");
+        var context = canvas.getContext("2d");
 
-        canvasState.drawImage(img, 30, 30, 440, 440);
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        context.beginPath();
+        context.rect(0, 0, 500, 800);
+        context.fillStyle = "#dcd9d2";
+        context.fill();
+
+        var img = new Image();
+        img.onload = function () {
+            context.drawImage(img, 30, 30, 440, 440);
+        }
+        img.src = response.images[0].url;
+
+        context.font = "40px Oswald";
+        context.fillStyle = "#2c2b29";
+        document.fonts.ready.then(function () {
+            var words = response.name.split(' ');
+            var line = '';
+            var xloc = 30;
+            var yloc = 510
+
+            for (var n = 0; n < words.length; n++) {
+                var testLine = line + words[n] + ' ';
+                var metrics = context.measureText(testLine);
+                var testWidth = metrics.width;
+                if (testWidth > 440 && n > 0) {
+                    context.fillText(line, xloc, yloc);
+                    line = words[n] + ' ';
+                    yloc += 40;
+                }
+                else {
+                    line = testLine;
+                }
+            }
+
+            context.fillText(line, xloc, yloc);
+
+            context.font = "100 24px Oswald";
+            yloc += 28;
+
+            context.fillText(response.release_date.split('-')[0], xloc, yloc);
+
+            yloc += 28;
+
+            context.font = "24px Oswald";
+
+            var tracks = response.tracks.items
+
+            for (var i = 0; i < tracks.length; i++) {
+                var trackwords = tracks[i].name.split(' ');
+
+                console.log(trackwords);
+
+                line = '';
+
+                for (var j = 0; j < trackwords.length; j++) {
+                    var testLine = line + trackwords[j] + ' ';
+                    var metrics = context.measureText(testLine);
+                    var testWidth = metrics.width;
+                    if (testWidth > 440 && j > 0) {
+                        context.fillText(line, xloc, yloc);
+                        line = trackwords[j] + ' ';
+                        yloc += 20;
+                    }
+                    else {
+                        line = testLine;
+                    }
+                    
+                }
+                context.fillText(line, xloc, yloc);
+                yloc += 20;
+            }
+
+        });
+
+
     };
 
     render() {
@@ -189,7 +263,7 @@ export default class CreatePolaroid extends Component {
                                     <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
                                 </Tooltip>
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox defaultChecked />} label="Include Remastered" />
+                                    <FormControlLabel control={<Checkbox />} label="Include Remastered" />
                                 </Tooltip>
                                 <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
 
@@ -214,24 +288,18 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <canvas id="polaroid-canvas" width="500" height="800" style={polaroidStyle}>
+                    <canvas id="polaroid-canvas" width="500" height="800">
                         Your browser does not support the HTML canvas tag.
                     </canvas>
+                    <span style={{ fontFamily: "Oswald", color: "#d0ccc4" }}>
+                        HELLO
+                    </span>
 
-                </Grid>
-
-                <Grid item xs={12} align="center">
-                    <img id="polaroid-cover" src={this.state.imgURL} >
-                    </img>
                 </Grid>
 
             </Grid>
         );
     }
 }
-
-const polaroidStyle = {
-    backgroundColor: '#dcd9d2',
-};
 
 
