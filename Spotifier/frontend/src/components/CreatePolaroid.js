@@ -22,7 +22,6 @@ export default class CreatePolaroid extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
-            imgURL: "",
         }
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
@@ -88,17 +87,12 @@ export default class CreatePolaroid extends Component {
                     // Handle passed or failed responses
                     console.log(response);
                     if (response.status == 200) {
-                        // print(response);
-                        this.setState({
-                            imgURL: response.images[0].url, //imgURL is different for tracks
-                        });
 
                         this.paintImg(response);
 
                     } else {
                         this.setState({
                             errorMsg: "Error: " + response.errorMsg,
-                            imgURL: "",
                         });
                     }
                 });
@@ -132,11 +126,20 @@ export default class CreatePolaroid extends Component {
         context.fillStyle = "#dcd9d2";
         context.fill();
 
-        var img = new Image();
-        img.onload = function () {
-            context.drawImage(img, 30, 30, 440, 440);
+        switch (response.type) {
+            case "album":
+                this.drawArt(response.images[0].url, context);
+                break;
+            case "track":
+                this.drawArt(response.album.images[0].url, context);
+                break;
+            case "artist":
+                this.drawArt(response.images[0].url, context);
+                break;
+            case "playlist":
+                this.drawArt(response.images[0].url, context);
+                break;
         }
-        img.src = response.images[0].url;
 
         context.font = "40px Oswald";
         context.fillStyle = "#2c2b29";
@@ -192,7 +195,7 @@ export default class CreatePolaroid extends Component {
                     else {
                         line = testLine;
                     }
-                    
+
                 }
                 context.fillText(line, xloc, yloc);
                 yloc += 20;
@@ -202,6 +205,14 @@ export default class CreatePolaroid extends Component {
 
 
     };
+
+    drawArt(imgURL, context) {
+        var img = new Image();
+        img.onload = function () {
+            context.drawImage(img, 30, 30, 440, 440);
+        }
+        img.src = imgURL;
+    }
 
     render() {
         return (
