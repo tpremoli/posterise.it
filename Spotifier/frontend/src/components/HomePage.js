@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AboutPage from "./AboutPage";
 import CreatePolaroid from "./CreatePolaroid";
+import PolaroidCanvas from "./PolaroidCanvas";
 import {
     BrowserRouter as Router,
     Routes,
@@ -26,6 +27,7 @@ export default class HomePage extends Component {
                     </Route>
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/create-polaroid" element={<CreatePolaroid />} />
+                    <Route path="/polaroid" element={<PolaroidCanvas />} />
                 </Routes>
             </Router>
         );

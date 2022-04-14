@@ -7,4 +7,5 @@ urlpatterns = [
     path('', index), 
     path('about', index),
     path('create-polaroid', index),
+    path('polaroid', index),
 ]
