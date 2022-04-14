@@ -104,7 +104,6 @@ export default class CreatePolaroid extends Component {
             .then((response) => response.json())
             .then((data) => {
                 this.setState({ spotifyAuthenticated: data.status });
-                // console.log(data.status);
                 if (!data.status) {
                     fetch("/get-auth-url")
                         .then((response) => response.json())
@@ -129,79 +128,77 @@ export default class CreatePolaroid extends Component {
         switch (response.type) {
             case "album":
                 this.drawArt(response.images[0].url, context);
-                break;
-            case "track":
-                this.drawArt(response.album.images[0].url, context);
-                break;
-            case "artist":
-                this.drawArt(response.images[0].url, context);
-                break;
-            case "playlist":
-                this.drawArt(response.images[0].url, context);
-                break;
-        }
+                document.fonts.ready.then(function () {
+                    var xloc = 30;
+                    var yloc = drawTitle(response.name, context);
 
-        context.font = "40px Oswald";
-        context.fillStyle = "#2c2b29";
-        document.fonts.ready.then(function () {
-            var words = response.name.split(' ');
-            var line = '';
-            var xloc = 30;
-            var yloc = 510
+                    // Should turn next into function
+                    yloc += 28;
 
-            for (var n = 0; n < words.length; n++) {
-                var testLine = line + words[n] + ' ';
-                var metrics = context.measureText(testLine);
-                var testWidth = metrics.width;
-                if (testWidth > 440 && n > 0) {
-                    context.fillText(line, xloc, yloc);
-                    line = words[n] + ' ';
-                    yloc += 40;
-                }
-                else {
-                    line = testLine;
-                }
-            }
+                    context.font = "100 24px Oswald";
 
-            context.fillText(line, xloc, yloc);
+                    context.fillText(response.release_date.split('-')[0], xloc, yloc);
 
-            context.font = "100 24px Oswald";
-            yloc += 28;
+                    yloc += 28;
 
-            context.fillText(response.release_date.split('-')[0], xloc, yloc);
+                    context.font = "24px Oswald";
 
-            yloc += 28;
+                    var tracks = response.tracks.items
 
-            context.font = "24px Oswald";
+                    for (var i = 0; i < tracks.length; i++) {
+                        var trackwords = tracks[i].name.split(' ');
 
-            var tracks = response.tracks.items
+                        var line = '';
 
-            for (var i = 0; i < tracks.length; i++) {
-                var trackwords = tracks[i].name.split(' ');
+                        for (var j = 0; j < trackwords.length; j++) {
+                            var testLine = line + trackwords[j] + ' ';
+                            var metrics = context.measureText(testLine);
+                            var testWidth = metrics.width;
+                            if (testWidth > 440 && j > 0) {
+                                context.fillText(line, xloc, yloc);
+                                line = trackwords[j] + ' ';
+                                yloc += 20;
+                            }
+                            else {
+                                line = testLine;
+                            }
 
-                console.log(trackwords);
-
-                line = '';
-
-                for (var j = 0; j < trackwords.length; j++) {
-                    var testLine = line + trackwords[j] + ' ';
-                    var metrics = context.measureText(testLine);
-                    var testWidth = metrics.width;
-                    if (testWidth > 440 && j > 0) {
+                        }
                         context.fillText(line, xloc, yloc);
-                        line = trackwords[j] + ' ';
                         yloc += 20;
                     }
-                    else {
-                        line = testLine;
-                    }
 
-                }
-                context.fillText(line, xloc, yloc);
-                yloc += 20;
-            }
+                });
+                break;
 
-        });
+            case "track":
+                this.drawArt(response.album.images[0].url, context);
+                document.fonts.ready.then(function () {
+                    var xloc = 30;
+                    var yloc = drawTitle(response.name, context);
+                });
+                break;
+
+            case "artist":
+                this.drawArt(response.images[0].url, context);
+
+                document.fonts.ready.then(function () {
+                    var xloc = 30;
+                    var yloc = drawTitle(response.name, context);
+                });
+                break;
+
+            case "playlist":
+                this.drawArt(response.images[0].url, context);
+                document.fonts.ready.then(function () {
+                    var xloc = 30;
+                    var yloc = drawTitle(response.name, context);
+                });
+                break;
+
+        }
+
+
 
 
     };
@@ -213,6 +210,8 @@ export default class CreatePolaroid extends Component {
         }
         img.src = imgURL;
     }
+
+
 
     render() {
         return (
@@ -313,4 +312,31 @@ export default class CreatePolaroid extends Component {
     }
 }
 
+function drawTitle(title, context) {
+    context.font = "40px Oswald";
+    context.fillStyle = "#2c2b29";
 
+    var words = title.split(' ');
+    var line = '';
+    var xloc = 30;
+    var yloc = 510
+
+    for (var n = 0; n < words.length; n++) {
+
+        var testLine = line + words[n] + ' ';
+        var metrics = context.measureText(testLine);
+        var testWidth = metrics.width;
+        if (testWidth > 440 && n > 0) {
+            context.fillText(line, xloc, yloc);
+            line = words[n] + ' ';
+            yloc += 40;
+        }
+        else {
+            line = testLine;
+        }
+    }
+
+    context.fillText(line, xloc, yloc);
+
+    return yloc;
+}
