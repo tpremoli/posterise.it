@@ -26,6 +26,7 @@ export default class CreatePolaroid extends Component {
         }
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
+        this.paintImg = this.paintImg.bind(this);
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
     }
@@ -91,6 +92,9 @@ export default class CreatePolaroid extends Component {
                         this.setState({
                             imgURL: response.images[0].url, //imgURL is different for tracks
                         });
+
+                        this.paintImg();
+
                     } else {
                         this.setState({
                             errorMsg: "Error: " + response.errorMsg,
@@ -117,7 +121,13 @@ export default class CreatePolaroid extends Component {
             });
     }
 
+    paintImg() {
+        var canvas = document.getElementById("polaroid-canvas");
+        var canvasState = canvas.getContext("2d");
+        var img = document.getElementById("polaroid-cover");
 
+        canvasState.drawImage(img, 30, 30, 440, 440);
+    };
 
     render() {
         return (
@@ -204,15 +214,24 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
+                    <canvas id="polaroid-canvas" width="500" height="800" style={polaroidStyle}>
+                        Your browser does not support the HTML canvas tag.
+                    </canvas>
+
                 </Grid>
 
                 <Grid item xs={12} align="center">
-                    <img src={this.state.imgURL}>
-
+                    <img id="polaroid-cover" src={this.state.imgURL} >
                     </img>
                 </Grid>
+
             </Grid>
         );
     }
 }
+
+const polaroidStyle = {
+    backgroundColor: '#dcd9d2',
+};
+
 
