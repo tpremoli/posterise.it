@@ -18,6 +18,7 @@ In /Spotifier/Frontend:
     npm install react-router-dom
     npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
     npm install @babel/plugin-proposal-class-properties
+    npm install --save html2canvas
 
     <!-- npm install @material-ui/core@next -->
     <!-- npm install @material-ui/lab@next -->

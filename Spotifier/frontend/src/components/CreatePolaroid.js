@@ -12,7 +12,7 @@ import { Collapse, Paper } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ScrollDialog from "./URIHelpDialog.js";
-// import domtoimage from 'dom-to-image';
+import html2canvas from 'html2canvas';
 
 export default class CreatePolaroid extends Component {
     constructor(props) {
