@@ -207,13 +207,23 @@ export default class CreatePolaroid extends Component {
                 break;
         }
 
-        html2canvas(document.getElementById("polaroid-canvas"), { allowTaint: true }).then(canvas => {
-            document.body.appendChild(canvas);
-            var dataURL = canvas.toDataURL("image/png");
-            var newTab = window.open('about:blank', 'image from canvas');
-            newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+        // Separate image is necessary to avoid desync when loading image
+        var canvasimg = new Image();
+        canvasimg.onload = function () {
+            // Converting html image display into canvas image
+            html2canvas(document.getElementById("polaroid-canvas"), {
+                useCORS: true,
+            }).then(canvas => {
+                // document.body.appendChild(canvas);
+                // 
+                var dataURL = canvas.toDataURL("image/png");
+                var newTab = window.open('about:blank', 'image from canvas');
+                newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+            });
+        }
+        canvasimg.src = document.getElementById("polaroid-album-art").getAttribute("src");
 
-        });
+
 
     };
 
@@ -221,7 +231,7 @@ export default class CreatePolaroid extends Component {
         const parentRect = parentDiv.getBoundingClientRect();
         const childRect = childDiv.getBoundingClientRect();
 
-        return parentRect.bottom-15 < childRect.bottom;
+        return parentRect.bottom - 15 < childRect.bottom;
     }
 
     render() {
