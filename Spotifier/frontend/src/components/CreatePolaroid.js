@@ -115,18 +115,20 @@ export default class CreatePolaroid extends Component {
     }
 
     paintImg(response) {
-        var canvas = document.getElementById("polaroid-canvas");
-        var context = canvas.getContext("2d");
+        // var canvas = document.getElementById("polaroid-canvas");
+        // var context = canvas.getContext("2d");
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        // context.clearRect(0, 0, canvas.width, canvas.height);
 
-        context.beginPath();
-        context.rect(0, 0, 500, 800);
-        context.fillStyle = "#dcd9d2";
-        context.fill();
+        // context.beginPath();
+        // context.rect(0, 0, 500, 800);
+        // context.fillStyle = "#dcd9d2";
+        // context.fill();
 
         switch (response.type) {
             case "album":
+                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+
                 this.drawArt(response.images[0].url, context);
                 document.fonts.ready.then(function () {
                     var xloc = 30;
@@ -172,6 +174,8 @@ export default class CreatePolaroid extends Component {
                 break;
 
             case "track":
+                document.getElementById("polaroid-album-art").setAttribute("src", response.album.images[0].url);
+
                 this.drawArt(response.album.images[0].url, context);
                 document.fonts.ready.then(function () {
                     var xloc = 30;
@@ -180,6 +184,8 @@ export default class CreatePolaroid extends Component {
                 break;
 
             case "artist":
+                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+
                 this.drawArt(response.images[0].url, context);
 
                 document.fonts.ready.then(function () {
@@ -189,6 +195,8 @@ export default class CreatePolaroid extends Component {
                 break;
 
             case "playlist":
+                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+
                 this.drawArt(response.images[0].url, context);
                 document.fonts.ready.then(function () {
                     var xloc = 30;
@@ -298,16 +306,22 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <canvas id="polaroid-canvas" width="500" height="800">
-                        Your browser does not support the HTML canvas tag.
-                    </canvas>
-                    <span style={{ fontFamily: "Oswald", color: "#d0ccc4" }}>
-                        HELLO
-                    </span>
-
                 </Grid>
 
+                <div id="polaroid-canvas" width="500" height="800" color="red" >
+                    <img style={{
+                        width: 440, height: 440, marginTop: 30, marginRight: 30, marginLeft: 30,
+                    }}
+                        id="polaroid-album-art"
+                    ></img>
+                    <p></p>
+                </div>
+                <span style={{ fontFamily: "Oswald", color: "#d0ccc4" }}>
+                    HELLO
+                </span>
+
             </Grid>
+
         );
     }
 }
