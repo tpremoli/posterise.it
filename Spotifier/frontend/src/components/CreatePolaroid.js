@@ -158,7 +158,7 @@ export default class CreatePolaroid extends Component {
 
                 var resourceTracks = document.getElementById("polaroid-resource-tracks");
                 resourceTracks.innerHTML = "";
-        
+
                 break;
 
             case "artist":
@@ -184,13 +184,19 @@ export default class CreatePolaroid extends Component {
                 resourceTracks.innerHTML = "";
 
                 break;
-
         }
 
+        html2canvas(document.getElementById("polaroid-canvas"), { allowTaint: true }).then(canvas => {
+            document.body.appendChild(canvas);
+            // var dataURL = canvas.toDataURL("image/png");
+            // var newTab = window.open('about:blank', 'image from canvas');
+            // newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
 
+        });
 
 
     };
+    
 
     render() {
         return (
@@ -327,31 +333,3 @@ export default class CreatePolaroid extends Component {
     }
 }
 
-function drawTitle(title, context) {
-    context.font = "40px Oswald";
-    context.fillStyle = "#2c2b29";
-
-    var words = title.split(' ');
-    var line = '';
-    var xloc = 30;
-    var yloc = 510
-
-    for (var n = 0; n < words.length; n++) {
-
-        var testLine = line + words[n] + ' ';
-        var metrics = context.measureText(testLine);
-        var testWidth = metrics.width;
-        if (testWidth > 440 && n > 0) {
-            context.fillText(line, xloc, yloc);
-            line = words[n] + ' ';
-            yloc += 40;
-        }
-        else {
-            line = testLine;
-        }
-    }
-
-    context.fillText(line, xloc, yloc);
-
-    return yloc;
-}
