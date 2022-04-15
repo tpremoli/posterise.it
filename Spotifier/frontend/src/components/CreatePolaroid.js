@@ -130,6 +130,9 @@ export default class CreatePolaroid extends Component {
                 document.getElementById("polaroid-resource-year").style.fontWeight = 300;
                 document.getElementById("polaroid-resource-year").innerHTML = response.release_date.split('-')[0];
 
+                document.getElementById("polaroid-paper").hidden = false;
+
+
                 this.drawArt(response.images[0].url, context);
                 break;
 
@@ -205,14 +208,16 @@ export default class CreatePolaroid extends Component {
                         </Alert>
                     </Collapse>
                 </Grid>
+
                 <Grid
+                    container
+                    spacing={0}
+                    direction="row"
                     alignItems="center"
-                    justify="center"
-                    item
-                    xs={12}
-                    align="center"
+                    justifyContent="center"
+                    style={{ minHeight: '100vh' }}
                 >
-                    <Paper item pt={6} xs={3} component={Grid}>
+                    <Paper item pt={6} xs={3} component={Grid} mr={4}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -257,43 +262,39 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                </Grid>
-
-                <div id="polaroid-canvas" style={{
-                    backgroundColor: "#dcd9d2", position: "absolute", width: 500, height: 800,
-                }} >
-                    <img style={{
-                        width: 430, height: 430, marginTop: 35, marginRight: 35, marginLeft: 35, marginBottom: 0,
-                    }}
-                        id="polaroid-album-art"
-                    ></img>
-
-                    <div id="polaroid-text-holder"
-                        style={{
-                        width: 430, height: 430, marginTop: 0, marginRight: 35, marginLeft: 35, marginBottom: 35,
-                        wordWrap: "break-word",
+                    <Paper id="polaroid-paper" item p={2} component={Grid} hidden={true} style={{
                     }}>
-                        <p style={{
-                            fontFamily: "Oswald", color: "#2c2b29", fontSize: "38px",
-                            marginLeft: 0, marginTop: 0, lineHeight: "90%",
-                        }}
-                            id="polaroid-resource-title"
-                        >
-                        </p>
-                        <p style={{
-                            fontFamily: "Oswald", color: "#2c2b29", fontSize: "24px", fontWeight: 200,
-                            marginLeft: 0, marginTop: -30, lineHeight: "90%",
-                        }}
-                            id="polaroid-resource-year"
-                        >
-                        </p>
+                        <div id="polaroid-canvas" style={{
+                            backgroundColor: "#dcd9d2", width: 500, height: 800, padding: 10,
+                        }} >
+                            <img style={{
+                                width: 430, height: 430, marginTop: 35, marginRight: 35, marginLeft: 35, marginBottom: 0,
+                            }}
+                                id="polaroid-album-art"
+                            ></img>
 
-
-
-                    </div>
-                </div>
-
-                <Grid>
+                            <div id="polaroid-text-holder"
+                                style={{
+                                    width: 430, height: 430, marginTop: 0, marginRight: 35, marginLeft: 35, marginBottom: 35,
+                                    wordWrap: "break-word",
+                                }}>
+                                <p style={{
+                                    fontFamily: "Oswald", color: "#2c2b29", fontSize: "38px",
+                                    marginLeft: 0, marginTop: 0, lineHeight: "90%",
+                                }}
+                                    id="polaroid-resource-title"
+                                >
+                                </p>
+                                <p style={{
+                                    fontFamily: "Oswald", color: "#2c2b29", fontSize: "24px", fontWeight: 200,
+                                    marginLeft: 0, marginTop: -30, lineHeight: "90%",
+                                }}
+                                    id="polaroid-resource-year"
+                                >
+                                </p>
+                            </div>
+                        </div>
+                    </Paper>
 
                 </Grid>
 
