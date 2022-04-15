@@ -74,6 +74,9 @@ export default class CreatePolaroid extends Component {
             });
 
         } else {
+            document.getElementById("polaroid-album-art").setAttribute("src", "");
+            document.getElementById("polaroid-resource-title").innerHTML = "";
+            document.getElementById("polaroid-resource-year").innerHTML = "";
             this.setState({
                 errorMsg: "Invalid URI!",
             });
@@ -91,9 +94,12 @@ export default class CreatePolaroid extends Component {
                         this.paintImg(response);
 
                     } else {
+                        document.getElementById("polaroid-album-art").setAttribute("src", "");
+                        document.getElementById("polaroid-resource-title").innerHTML = "";
                         this.setState({
                             errorMsg: "Error: " + response.errorMsg,
                         });
+
                     }
                 });
         }
@@ -115,93 +121,38 @@ export default class CreatePolaroid extends Component {
     }
 
     paintImg(response) {
-        // var canvas = document.getElementById("polaroid-canvas");
-        // var context = canvas.getContext("2d");
-
-        // context.clearRect(0, 0, canvas.width, canvas.height);
-
-        // context.beginPath();
-        // context.rect(0, 0, 500, 800);
-        // context.fillStyle = "#dcd9d2";
-        // context.fill();
+        document.getElementById("polaroid-resource-title").innerHTML = response.name;
 
         switch (response.type) {
             case "album":
                 document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+                document.getElementById("polaroid-resource-year").style.fontStyle = "normal";
+                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+                document.getElementById("polaroid-resource-year").innerHTML = response.release_date.split('-')[0];
 
                 this.drawArt(response.images[0].url, context);
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-
-                    // Should turn next into function
-                    yloc += 28;
-
-                    context.font = "100 24px Oswald";
-
-                    context.fillText(response.release_date.split('-')[0], xloc, yloc);
-
-                    yloc += 28;
-
-                    context.font = "24px Oswald";
-
-                    var tracks = response.tracks.items
-
-                    for (var i = 0; i < tracks.length; i++) {
-                        var trackwords = tracks[i].name.split(' ');
-
-                        var line = '';
-
-                        for (var j = 0; j < trackwords.length; j++) {
-                            var testLine = line + trackwords[j] + ' ';
-                            var metrics = context.measureText(testLine);
-                            var testWidth = metrics.width;
-                            if (testWidth > 440 && j > 0) {
-                                context.fillText(line, xloc, yloc);
-                                line = trackwords[j] + ' ';
-                                yloc += 20;
-                            }
-                            else {
-                                line = testLine;
-                            }
-
-                        }
-                        context.fillText(line, xloc, yloc);
-                        yloc += 20;
-                    }
-
-                });
                 break;
 
             case "track":
                 document.getElementById("polaroid-album-art").setAttribute("src", response.album.images[0].url);
+                document.getElementById("polaroid-resource-year").style.fontStyle = "normal";
+                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+                document.getElementById("polaroid-resource-year").innerHTML = response.artists[0].name + " - " + response.album.release_date.split('-')[0];
 
-                this.drawArt(response.album.images[0].url, context);
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-                });
                 break;
 
             case "artist":
                 document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+                document.getElementById("polaroid-resource-year").innerHTML = "";
 
-                this.drawArt(response.images[0].url, context);
-
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-                });
                 break;
 
             case "playlist":
                 document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+                document.getElementById("polaroid-resource-year").style.fontStyle = "italic";
+                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+                document.getElementById("polaroid-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
 
-                this.drawArt(response.images[0].url, context);
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-                });
                 break;
 
         }
@@ -275,13 +226,13 @@ export default class CreatePolaroid extends Component {
                                 </FormHelperText>
 
                                 <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox defaultChecked />} label="Include Length" />
+                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Length" />
                                 </Tooltip>
                                 <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
+                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Artist" />
                                 </Tooltip>
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox />} label="Include Remastered" />
+                                    <FormControlLabel disabled control={<Checkbox />} label="Include Remastered" />
                                 </Tooltip>
                                 <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
 
@@ -308,17 +259,43 @@ export default class CreatePolaroid extends Component {
 
                 </Grid>
 
-                <div id="polaroid-canvas" width="500" height="800" color="red" >
+                <div id="polaroid-canvas" style={{
+                    backgroundColor: "#dcd9d2", position: "absolute", width: 500, height: 800,
+                }} >
                     <img style={{
-                        width: 440, height: 440, marginTop: 30, marginRight: 30, marginLeft: 30,
+                        width: 430, height: 430, marginTop: 35, marginRight: 35, marginLeft: 35, marginBottom: 0,
                     }}
                         id="polaroid-album-art"
                     ></img>
-                    <p></p>
+
+                    <div id="polaroid-text-holder"
+                        style={{
+                        width: 430, height: 430, marginTop: 0, marginRight: 35, marginLeft: 35, marginBottom: 35,
+                        wordWrap: "break-word",
+                    }}>
+                        <p style={{
+                            fontFamily: "Oswald", color: "#2c2b29", fontSize: "38px",
+                            marginLeft: 0, marginTop: 0, lineHeight: "90%",
+                        }}
+                            id="polaroid-resource-title"
+                        >
+                        </p>
+                        <p style={{
+                            fontFamily: "Oswald", color: "#2c2b29", fontSize: "24px", fontWeight: 200,
+                            marginLeft: 0, marginTop: -30, lineHeight: "90%",
+                        }}
+                            id="polaroid-resource-year"
+                        >
+                        </p>
+
+
+
+                    </div>
                 </div>
-                <span style={{ fontFamily: "Oswald", color: "#d0ccc4" }}>
-                    HELLO
-                </span>
+
+                <Grid>
+
+                </Grid>
 
             </Grid>
 
