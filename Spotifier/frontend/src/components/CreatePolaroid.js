@@ -132,8 +132,20 @@ export default class CreatePolaroid extends Component {
 
                 document.getElementById("polaroid-paper").hidden = false;
 
+                var tracks = response.tracks.items;
 
-                this.drawArt(response.images[0].url, context);
+                var resourceTracks = document.getElementById("polaroid-resource-tracks");
+                resourceTracks.innerHTML = "";
+
+                tracks.forEach(function (track) {
+                    var trackline = document.createElement("p");
+                    var trackname = document.createTextNode(track.name);
+                    trackline.appendChild(trackname);
+                    trackline.style.cssText = "margin-top: -20px;";
+
+                    resourceTracks.appendChild(trackline);
+                })
+
                 break;
 
             case "track":
@@ -142,11 +154,21 @@ export default class CreatePolaroid extends Component {
                 document.getElementById("polaroid-resource-year").style.fontWeight = 300;
                 document.getElementById("polaroid-resource-year").innerHTML = response.artists[0].name + " - " + response.album.release_date.split('-')[0];
 
+                document.getElementById("polaroid-paper").hidden = false;
+
+                var resourceTracks = document.getElementById("polaroid-resource-tracks");
+                resourceTracks.innerHTML = "";
+        
                 break;
 
             case "artist":
                 document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
                 document.getElementById("polaroid-resource-year").innerHTML = "";
+
+                document.getElementById("polaroid-paper").hidden = false;
+
+                var resourceTracks = document.getElementById("polaroid-resource-tracks");
+                resourceTracks.innerHTML = "";
 
                 break;
 
@@ -156,6 +178,11 @@ export default class CreatePolaroid extends Component {
                 document.getElementById("polaroid-resource-year").style.fontWeight = 300;
                 document.getElementById("polaroid-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
 
+                document.getElementById("polaroid-paper").hidden = false;
+
+                var resourceTracks = document.getElementById("polaroid-resource-tracks");
+                resourceTracks.innerHTML = "";
+
                 break;
 
         }
@@ -164,16 +191,6 @@ export default class CreatePolaroid extends Component {
 
 
     };
-
-    drawArt(imgURL, context) {
-        var img = new Image();
-        img.onload = function () {
-            context.drawImage(img, 30, 30, 440, 440);
-        }
-        img.src = imgURL;
-    }
-
-
 
     render() {
         return (
@@ -262,10 +279,10 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <Paper id="polaroid-paper" item p={2} component={Grid} hidden={true} style={{
+                    <Paper id="polaroid-paper" item p={3} component={Grid} hidden={true} style={{
                     }}>
                         <div id="polaroid-canvas" style={{
-                            backgroundColor: "#dcd9d2", width: 500, height: 800, padding: 10,
+                            backgroundColor: "#dcd9d2", width: 500, height: 800, margin: 10,
                         }} >
                             <img style={{
                                 width: 430, height: 430, marginTop: 35, marginRight: 35, marginLeft: 35, marginBottom: 0,
@@ -292,6 +309,12 @@ export default class CreatePolaroid extends Component {
                                     id="polaroid-resource-year"
                                 >
                                 </p>
+                                <div id="polaroid-resource-tracks" style={{
+                                    fontFamily: "Oswald", color: "#2c2b29", fontSize: "24px", fontWeight: 400,
+                                    marginLeft: 0, marginTop: -20, lineHeight: "90%",
+                                }}>
+
+                                </div>
                             </div>
                         </div>
                     </Paper>
