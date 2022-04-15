@@ -26,6 +26,7 @@ export default class CreatePolaroid extends Component {
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.paintImg = this.paintImg.bind(this);
+        this.isOutsideContainer = this.isOutsideContainer.bind(this);
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
     }
@@ -122,6 +123,7 @@ export default class CreatePolaroid extends Component {
 
     paintImg(response) {
         document.getElementById("polaroid-resource-title").innerHTML = response.name;
+        document.getElementById("polaroid-resource-tracks").style.fontSize = '24px';
 
         switch (response.type) {
             case "album":
@@ -132,7 +134,7 @@ export default class CreatePolaroid extends Component {
 
                 document.getElementById("polaroid-paper").hidden = false;
 
-                var tracks = response.tracks.items;
+                const tracks = response.tracks.items;
 
                 var resourceTracks = document.getElementById("polaroid-resource-tracks");
                 resourceTracks.innerHTML = "";
@@ -142,9 +144,28 @@ export default class CreatePolaroid extends Component {
                     var trackname = document.createTextNode(track.name);
                     trackline.appendChild(trackname);
                     trackline.style.cssText = "margin-top: -20px;";
+                    trackline.className += "track-line";
 
                     resourceTracks.appendChild(trackline);
-                })
+                }, this);
+
+                const lastChild = resourceTracks.lastChild;
+                const canvas = document.getElementById("polaroid-canvas");
+
+                while (this.isOutsideContainer(canvas, lastChild)) {
+                    const fontSize = parseFloat(window.getComputedStyle(resourceTracks, null).getPropertyValue('font-size'));
+                    resourceTracks.style.fontSize = (fontSize - 1) + 'px';
+
+                    var tracklines = document.getElementsByClassName('track-line');
+
+                    for (var i = 0; i < tracklines.length; i++) {
+                        var trackline = tracklines[i];
+                        var marginTop = parseFloat(window.getComputedStyle(trackline, null).getPropertyValue('margin-top'));
+                        trackline.style.marginTop = (marginTop + 1) + 'px';
+                    }
+                }
+
+
 
                 break;
 
@@ -188,15 +209,20 @@ export default class CreatePolaroid extends Component {
 
         html2canvas(document.getElementById("polaroid-canvas"), { allowTaint: true }).then(canvas => {
             document.body.appendChild(canvas);
-            // var dataURL = canvas.toDataURL("image/png");
-            // var newTab = window.open('about:blank', 'image from canvas');
-            // newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+            var dataURL = canvas.toDataURL("image/png");
+            var newTab = window.open('about:blank', 'image from canvas');
+            newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
 
         });
 
-
     };
-    
+
+    isOutsideContainer(parentDiv, childDiv) {
+        const parentRect = parentDiv.getBoundingClientRect();
+        const childRect = childDiv.getBoundingClientRect();
+
+        return parentRect.bottom-15 < childRect.bottom;
+    }
 
     render() {
         return (
@@ -291,14 +317,14 @@ export default class CreatePolaroid extends Component {
                             backgroundColor: "#dcd9d2", width: 500, height: 800, margin: 10,
                         }} >
                             <img style={{
-                                width: 430, height: 430, marginTop: 35, marginRight: 35, marginLeft: 35, marginBottom: 0,
+                                width: 430, height: 435, marginTop: 30, marginRight: 35, marginLeft: 35, marginBottom: 0,
                             }}
                                 id="polaroid-album-art"
                             ></img>
 
                             <div id="polaroid-text-holder"
                                 style={{
-                                    width: 430, height: 430, marginTop: 0, marginRight: 35, marginLeft: 35, marginBottom: 35,
+                                    width: 430, height: 435, marginTop: 0, marginRight: 35, marginLeft: 35, marginBottom: 30,
                                     wordWrap: "break-word",
                                 }}>
                                 <p style={{
@@ -332,4 +358,3 @@ export default class CreatePolaroid extends Component {
         );
     }
 }
-
