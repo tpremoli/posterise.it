@@ -34,6 +34,8 @@ export default class CreatePolaroid extends Component {
 
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.paintImg = this.paintImg.bind(this);
+        this.fitTracks = this.fitTracks.bind(this);
+        this.shrinkFont = this.shrinkFont.bind(this);
         this.isOutsideContainer = this.isOutsideContainer.bind(this);
 
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
@@ -241,26 +243,7 @@ export default class CreatePolaroid extends Component {
                     trackContainer.appendChild(trackline);
                 }, this);
 
-                // Gets the last child to see if it overflows
-                const lastChild = trackContainer.lastChild;
-                const canvas = document.getElementById("polaroid-canvas");
-
-                // While the last child is overflowing, reduce the font size
-                while (this.isOutsideContainer(canvas, lastChild)) {
-                    // Reducing font size by 1
-                    const fontSize = parseFloat(window.getComputedStyle(trackContainer, null).getPropertyValue('font-size'));
-                    trackContainer.style.fontSize = (fontSize - 1) + 'px';
-
-                    // Gets all the children
-                    var tracklines = document.getElementsByClassName('track-line');
-
-                    // Sets the children's margin to be a lil bigger (looks better)
-                    for (var i = 0; i < tracklines.length; i++) {
-                        var trackline = tracklines[i];
-                        var marginTop = parseFloat(window.getComputedStyle(trackline, null).getPropertyValue('margin-top'));
-                        trackline.style.marginTop = (marginTop + 1) + 'px';
-                    }
-                }
+                this.fitTracks(trackContainer);
 
                 break;
 
@@ -341,12 +324,58 @@ export default class CreatePolaroid extends Component {
 
     };
 
+    fitTracks(trackContainer) {
+        // Gets the last child to see if it overflows
+        var lastChild = trackContainer.lastChild;
+        const canvas = document.getElementById("polaroid-canvas");
+
+        this.shrinkFont(trackContainer, 20);
+
+        var squashTo = trackContainer.firstChild;
+
+        // While the last child is overflowing, reduce the font size
+        while (this.isOutsideContainer(canvas, lastChild) && squashTo != lastChild) {
+            squashTo.innerHTML = squashTo.innerHTML.trim() + " / " + squashTo.nextSibling.innerHTML;
+            squashTo.nextSibling.remove();
+            squashTo = squashTo.nextSibling;
+        }
+
+        lastChild = trackContainer.lastChild;
+
+        if(this.isOutsideContainer(canvas, lastChild)){
+            this.shrinkFont(trackContainer);
+        }
+    }
+
+    shrinkFont(trackContainer, minFontSize=0){
+        var lastChild = trackContainer.lastChild;
+        const canvas = document.getElementById("polaroid-canvas");
+        var fontSize = parseFloat(window.getComputedStyle(trackContainer, null).getPropertyValue('font-size'));
+
+        // While the last child is overflowing, reduce the font size
+        while (this.isOutsideContainer(canvas, lastChild) && fontSize > minFontSize) {
+            // Reducing font size by 1
+            trackContainer.style.fontSize = (fontSize - 1) + 'px';
+            fontSize--;
+
+            // Gets all the children
+            var tracklines = document.getElementsByClassName('track-line');
+
+            // Sets the children's margin to be a lil bigger (looks better)
+            for (var i = 0; i < tracklines.length; i++) {
+                var trackline = tracklines[i];
+                var marginTop = parseFloat(window.getComputedStyle(trackline, null).getPropertyValue('margin-top'));
+                trackline.style.marginTop = (marginTop + 1) + 'px';
+            }
+        }
+    }
+
     // Checks if childDiv is outside the container
-    isOutsideContainer(parentDiv, childDiv) {
+    isOutsideContainer(parentDiv, childDiv, border=20) {
         const parentRect = parentDiv.getBoundingClientRect();
         const childRect = childDiv.getBoundingClientRect();
 
-        return parentRect.bottom - 15 < childRect.bottom;
+        return parentRect.bottom - border < childRect.bottom;
     }
 
     render() {
