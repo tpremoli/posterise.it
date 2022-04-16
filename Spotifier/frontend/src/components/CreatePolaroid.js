@@ -5,9 +5,12 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
+import FormHelperText from "@mui/material/FormHelperText";
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
-import { Collapse, Paper, Slide } from "@mui/material";
+import { Collapse, Paper, RadioGroup } from "@mui/material";
+import Switch from '@mui/material/Switch';
+import Radio from '@mui/material/Radio';
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import URIHelpDialog from "./URIHelpDialog.js";
@@ -26,12 +29,13 @@ export default class CreatePolaroid extends Component {
             includeArtist: true,
             includeLength: false,
             removeRemastered: false,
+            response: null,
         }
         // Parameter methods
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleArtistChange = this.handleArtistChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
-        this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
+        this.handleReturnPressed = this.handleReturnPressed.bind(this);
 
         // Creation methods
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
@@ -41,9 +45,15 @@ export default class CreatePolaroid extends Component {
         this.isOutsideContainer = this.isOutsideContainer.bind(this);
         this.generateImageFromHTML = this.generateImageFromHTML.bind(this);
 
+        // Customization methods
+        this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
+
         // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
+
+        // Utility methods
+        this.clearPolaroid = this.clearPolaroid.bind(this);
     }
 
     handleArtistChange(e) {
@@ -61,6 +71,10 @@ export default class CreatePolaroid extends Component {
     handleRemasteredChange(e) {
         this.setState({
             removeRemastered: e.target.checked,
+        }, () => {
+            console.log(this.state.removeRemastered);
+            console.log(this.state.response);
+            this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
         });
     }
 
@@ -68,6 +82,13 @@ export default class CreatePolaroid extends Component {
         this.setState({
             uri: e.target.value,
         });
+    }
+
+    handleReturnPressed(e) {
+        this.clearPolaroid();
+        document.getElementById("customize-page").hidden = true;
+        document.getElementById("create-page").hidden = false;
+
     }
 
     handleCreateButtonPressed() {
@@ -114,13 +135,8 @@ export default class CreatePolaroid extends Component {
 
         } else {
             // handling invalid uri and clearing all the data in the polaroid
-            document.getElementById("polaroid-album-art").setAttribute("src", "");
-            document.getElementById("polaroid-resource-title").innerHTML = "";
-            document.getElementById("polaroid-resource-year").innerHTML = "";
-            var resourceTracks = document.getElementById("polaroid-resource-tracks");
-            resourceTracks.innerHTML = "";
+            this.clearPolaroid();
 
-            document.getElementById("polaroid-paper").hidden = true;
             this.setState({
                 successMsg: "",
                 errorMsg: "Invalid URI!",
@@ -137,17 +153,18 @@ export default class CreatePolaroid extends Component {
                     // If the response is valid then paint the image
                     if (response.status == 200) {
 
+                        document.getElementById("create-page").hidden = true;
+                        document.getElementById("customize-page").hidden = false;
+
+                        this.setState({
+                            response: response,
+                        })
+
                         this.paintImg(response);
 
                     } else {
                         // handling invalid uri and clearing all the data in the polaroid if fetch failed
-                        document.getElementById("polaroid-album-art").setAttribute("src", "");
-                        document.getElementById("polaroid-resource-title").innerHTML = "";
-                        document.getElementById("polaroid-resource-year").innerHTML = "";
-                        var resourceTracks = document.getElementById("polaroid-resource-tracks");
-                        resourceTracks.innerHTML = "";
-
-                        document.getElementById("polaroid-paper").hidden = true;
+                        this.clearPolaroid();
                         this.setState({
                             successMsg: "",
                             errorMsg: "Error: " + response.errorMsg,
@@ -156,6 +173,17 @@ export default class CreatePolaroid extends Component {
                     }
                 });
         }
+    }
+
+    clearPolaroid() {
+        // handling invalid uri and clearing all the data in the polaroid
+        document.getElementById("polaroid-album-art").setAttribute("src", "");
+        document.getElementById("polaroid-resource-title").innerHTML = "";
+        document.getElementById("polaroid-resource-year").innerHTML = "";
+        var resourceTracks = document.getElementById("polaroid-resource-tracks");
+        resourceTracks.innerHTML = "";
+
+        document.getElementById("polaroid-paper").hidden = true;
     }
 
     // Authenticate spotify scripts
@@ -382,6 +410,15 @@ export default class CreatePolaroid extends Component {
         }
     }
 
+    handleColorChange(e) {
+        switch (e.target.value){
+            case "Inverted":
+                break;
+            case "Default":
+            default:
+        }
+    }
+
     // Checks if childDiv is outside the container
     isOutsideContainer(parentDiv, childDiv, border = 20) {
         const parentRect = parentDiv.getBoundingClientRect();
@@ -450,13 +487,8 @@ export default class CreatePolaroid extends Component {
                                     <FormControlLabel disabled control={<Checkbox />} label="Include Length"
                                         onChange={this.handleLengthChange} />
                                 </Tooltip>
-                                <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox />} label="Remove Remastered Tags"
-                                        onChange={this.handleRemasteredChange} />
-                                </Tooltip>
                                 <TextField id="standard-basic" label="URI" variant="standard"
                                     onChange={this.handleURIChange} />
-
                                 <URIHelpDialog />
 
                             </FormControl>
@@ -478,8 +510,62 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
+                    <Paper id="customize-page" item pt={6} xs={3} component={Grid} mr={4} hidden={true}>
+                        <Grid item xs={12} align="center" >
+                            <Typography component="h4" variant="h4">
+                                Customize Poster
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={12} align="center">
+                            <FormControl component="fieldset">
 
-                    <CustomizePaper hidden />
+                                <FormHelperText style={{ textAlign: "center" }}>
+                                    Options
+                                </FormHelperText>
+
+                                <RadioGroup row label="Color scheme" defaultValue="Default" onChange={this.handleColorChange}>
+                                    <FormControlLabel control={<Radio />} value="Default" label="Default" />
+                                    <FormControlLabel control={<Radio />} value="Inverted" label="Inverted" />
+                                    <Tooltip title="Not yet implemented!" arrow placement="right">
+                                        <FormControlLabel disabled control={<Radio />} value="Sample" label="Color sample" />
+                                    </Tooltip>
+                                </RadioGroup>
+
+                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="left">
+                                    <FormControlLabel disabled control={<Switch />} label="Include Artist"
+                                    />
+                                </Tooltip>
+
+                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="left">
+                                    <FormControlLabel disabled control={<Switch />} label="Include Length" />
+                                </Tooltip>
+
+                                <Tooltip title="Limits tracklist to one song per line" arrow placement="left">
+                                    <FormControlLabel disabled control={<Switch />} label="One track per line" />
+                                </Tooltip>
+
+                                <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left"
+                                    onChange={this.handleRemasteredChange} >
+                                    <FormControlLabel control={<Switch />} label="Remove Remastered Tags" />
+                                </Tooltip>
+
+
+                            </FormControl>
+                        </Grid>
+
+
+                        <Grid item xs={12} pb={2} align="center">
+                            <Button color="success" variant="contained">
+                                Download!
+                            </Button>
+                        </Grid>
+                        <Grid item xs={12} pb={6} align="center">
+                            <Button color="secondary" variant="outlined" to="/" onClick={this.handleReturnPressed}>
+                                Return
+                            </Button>
+                        </Grid>
+                    </Paper>
+
 
                     <Paper id="polaroid-paper" item p={2} component={Grid} hidden={true} style={{
                     }}>
