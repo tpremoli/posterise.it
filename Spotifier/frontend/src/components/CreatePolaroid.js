@@ -8,7 +8,7 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
-import { Collapse, Paper } from "@mui/material";
+import { Collapse, Paper, Slide } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ScrollDialog from "./URIHelpDialog.js";
@@ -23,13 +23,39 @@ export default class CreatePolaroid extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
+            includeArtist: true,
+            includeLength: false,
+            removeRemastered: false,
         }
         this.handleURIChange = this.handleURIChange.bind(this);
+        this.handleArtistChange = this.handleArtistChange.bind(this);
+        this.handleLengthChange = this.handleLengthChange.bind(this);
+        this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
+
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.paintImg = this.paintImg.bind(this);
         this.isOutsideContainer = this.isOutsideContainer.bind(this);
+
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
+    }
+
+    handleArtistChange(e) {
+        this.setState({
+            includeArtist: e.target.checked,
+        });
+    }
+
+    handleLengthChange(e) {
+        this.setState({
+            includeLength: e.target.checked,
+        });
+    }
+
+    handleRemasteredChange(e) {
+        this.setState({
+            removeRemastered: e.target.checked,
+        });
     }
 
     handleURIChange(e) {
@@ -144,8 +170,26 @@ export default class CreatePolaroid extends Component {
 
     // This function is responsible for rendering the html elements in the polaroid
     paintImg(response) {
-        // drawing title and resetting track fontsize
-        document.getElementById("polaroid-resource-title").innerHTML = response.name;
+        // This checks if to remove remastered tags
+        if (this.state.removeRemastered) {
+            // Clearing title section
+            const titleSection = document.getElementById("polaroid-resource-title");
+            titleSection.innerHTML = "";
+
+            // Splitting it by ( and adding first element generally removes remastered sign
+            const splitName = response.name.split('(');
+
+            titleSection.innerHTML += splitName[0]
+
+            // This will account for cases where there's more than one () in album title
+            for (var i = 1; i < splitName.length - 1; i++) {
+                titleSection.innerHTML += "(" + splitName[i];
+            }
+        } else {
+            document.getElementById("polaroid-resource-title").innerHTML = response.name;
+        }
+
+        // Resetting track fontsize
         document.getElementById("polaroid-resource-tracks").style.fontSize = '24px';
 
         switch (response.type) {
@@ -172,6 +216,22 @@ export default class CreatePolaroid extends Component {
 
                 // Creates track elements in the countainer for each track in the album
                 albumTracks.forEach(function (track) {
+                    if (this.state.removeRemastered) {
+                        // Getting name and resetting it
+                        var trackname = track.name;
+                        track.name = "";
+
+                        // Splitting it by ( and adding first element generally removes remastered sign
+                        const splitName = trackname.split('-');
+
+                        track.name += splitName[0]
+
+                        // This will account for cases where there's more than one () in album title
+                        for (var i = 1; i < splitName.length - 1; i++) {
+                            track.name += "-" + splitName[i];
+                        }
+                    }
+
                     var trackline = document.createElement("p");
                     var trackname = document.createTextNode(track.name);
                     trackline.appendChild(trackname);
@@ -344,16 +404,20 @@ export default class CreatePolaroid extends Component {
                                     Options
                                 </FormHelperText>
 
-                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Length" />
-                                </Tooltip>
                                 <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Artist" />
+                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Artist"
+                                        onChange={this.handleArtistChange} />
+                                </Tooltip>
+                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
+                                    <FormControlLabel disabled control={<Checkbox />} label="Include Length"
+                                        onChange={this.handleLengthChange} />
                                 </Tooltip>
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
-                                    <FormControlLabel disabled control={<Checkbox />} label="Include Remastered" />
+                                    <FormControlLabel control={<Checkbox />} label="Remove Remastered Tags"
+                                        onChange={this.handleRemasteredChange} />
                                 </Tooltip>
-                                <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
+                                <TextField id="standard-basic" label="URI" variant="standard"
+                                    onChange={this.handleURIChange} />
 
                                 <ScrollDialog />
 
@@ -378,8 +442,9 @@ export default class CreatePolaroid extends Component {
 
                     <Paper id="polaroid-paper" item p={3} component={Grid} hidden={true} style={{
                     }}>
-                        <Polaroid></Polaroid>
+                        <Polaroid />
                     </Paper>
+
 
                 </Grid>
 
