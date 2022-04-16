@@ -4,16 +4,16 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
 import { Collapse, Paper, Slide } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import ScrollDialog from "./URIHelpDialog.js";
-import html2canvas from 'html2canvas';
+import URIHelpDialog from "./URIHelpDialog.js";
 import Polaroid from "./Polaroid.js";
+import CustomizePaper from "./CustomizePaper.js";
+import html2canvas from 'html2canvas';
 
 export default class CreatePolaroid extends Component {
     constructor(props) {
@@ -39,6 +39,7 @@ export default class CreatePolaroid extends Component {
         this.fitTracks = this.fitTracks.bind(this);
         this.shrinkFont = this.shrinkFont.bind(this);
         this.isOutsideContainer = this.isOutsideContainer.bind(this);
+        this.generateImageFromHTML = this.generateImageFromHTML.bind(this);
 
         // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
@@ -308,7 +309,11 @@ export default class CreatePolaroid extends Component {
 
                 break;
         }
+        document.getElementById("create-page").hidden = true;
+        // this.generateImageFromHTML();
+    };
 
+    generateImageFromHTML() {
         // Separate image is necessary to avoid desync when loading image
         var canvasimg = new Image();
         canvasimg.onload = function () {
@@ -323,10 +328,8 @@ export default class CreatePolaroid extends Component {
                 newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
             });
         }
-
         canvasimg.src = document.getElementById("polaroid-album-art").getAttribute("src");
-
-    };
+    }
 
     fitTracks(trackContainer) {
         // Gets the last child to see if it overflows
@@ -351,12 +354,12 @@ export default class CreatePolaroid extends Component {
 
         // Checks if last child is still out of the container. if so shrink with no min value.
         lastChild = trackContainer.lastChild;
-        if(this.isOutsideContainer(canvas, lastChild)){
+        if (this.isOutsideContainer(canvas, lastChild)) {
             this.shrinkFont(trackContainer);
         }
     }
 
-    shrinkFont(trackContainer, minFontSize=0){
+    shrinkFont(trackContainer, minFontSize = 0) {
         var lastChild = trackContainer.lastChild;
         const canvas = document.getElementById("polaroid-canvas");
         var fontSize = parseFloat(window.getComputedStyle(trackContainer, null).getPropertyValue('font-size'));
@@ -380,7 +383,7 @@ export default class CreatePolaroid extends Component {
     }
 
     // Checks if childDiv is outside the container
-    isOutsideContainer(parentDiv, childDiv, border=20) {
+    isOutsideContainer(parentDiv, childDiv, border = 20) {
         const parentRect = parentDiv.getBoundingClientRect();
         const childRect = childDiv.getBoundingClientRect();
 
@@ -428,8 +431,9 @@ export default class CreatePolaroid extends Component {
                     alignItems="center"
                     justifyContent="center"
                     style={{ minHeight: '100vh' }}
+                    hidden={false}
                 >
-                    <Paper item pt={6} xs={3} component={Grid} mr={4}>
+                    <Paper id="create-page" item pt={6} xs={3} component={Grid} mr={4}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -437,10 +441,6 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
-
-                                <FormHelperText style={{ textAlign: "center" }}>
-                                    Options
-                                </FormHelperText>
 
                                 <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
                                     <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Artist"
@@ -457,7 +457,7 @@ export default class CreatePolaroid extends Component {
                                 <TextField id="standard-basic" label="URI" variant="standard"
                                     onChange={this.handleURIChange} />
 
-                                <ScrollDialog />
+                                <URIHelpDialog />
 
                             </FormControl>
                         </Grid>
@@ -478,7 +478,10 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <Paper id="polaroid-paper" item p={3} component={Grid} hidden={true} style={{
+
+                    <CustomizePaper hidden />
+
+                    <Paper id="polaroid-paper" item p={2} component={Grid} hidden={true} style={{
                     }}>
                         <Polaroid />
                     </Paper>

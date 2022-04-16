@@ -10,7 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
-export default function ScrollDialog() {
+export default function URIHelpDialog() {
     const [open, setOpen] = React.useState(false);
     const [scroll, setScroll] = React.useState('paper');
 
