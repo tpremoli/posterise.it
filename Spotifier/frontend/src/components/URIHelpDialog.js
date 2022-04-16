@@ -78,7 +78,7 @@ export default function ScrollDialog() {
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
 
-                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                            <Tooltip title="Copy to clipboard" arrow placement="left">
                                 <IconButton aria-label="copy-sample-album"
                                     onClick={() =>
                                         navigator.clipboard.writeText("spotify:album:0ETFjACtuP2ADo6LFhL6HN")
@@ -92,7 +92,7 @@ export default function ScrollDialog() {
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
 
-                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                            <Tooltip title="Copy to clipboard" arrow placement="left">
                                 <IconButton aria-label="copy-sample-album"
                                     onClick={() =>
                                         navigator.clipboard.writeText("spotify:track:4cOdK2wGLETKBW3PvgPWqT")
@@ -106,7 +106,7 @@ export default function ScrollDialog() {
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
 
-                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                            <Tooltip title="Copy to clipboard" arrow placement="left">
                                 <IconButton aria-label="copy-sample-album"
                                     onClick={() =>
                                         navigator.clipboard.writeText("spotify:artist:0k17h0D3J5VfsdmQ1iZtE9")
@@ -120,7 +120,7 @@ export default function ScrollDialog() {
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
 
-                            <Tooltip title="Copy to clipboard" arrow placement="right">
+                            <Tooltip title="Copy to clipboard" arrow placement="left">
                                 <IconButton aria-label="copy-sample-album"
                                     onClick={() =>
                                         navigator.clipboard.writeText("spotify:playlist:2DFRAWTSAuiqdikofkLJ3F")

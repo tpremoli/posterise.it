@@ -8,11 +8,12 @@ import FormHelperText from "@mui/material/FormHelperText";
 import FormControl from "@mui/material/FormControl";
 import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
-import { Collapse, Paper } from "@mui/material";
+import { Collapse, Paper, Slide } from "@mui/material";
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import ScrollDialog from "./URIHelpDialog.js";
 import html2canvas from 'html2canvas';
+import Polaroid from "./Polaroid.js";
 
 export default class CreatePolaroid extends Component {
     constructor(props) {
@@ -22,12 +23,39 @@ export default class CreatePolaroid extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
+            includeArtist: true,
+            includeLength: false,
+            removeRemastered: false,
         }
         this.handleURIChange = this.handleURIChange.bind(this);
+        this.handleArtistChange = this.handleArtistChange.bind(this);
+        this.handleLengthChange = this.handleLengthChange.bind(this);
+        this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
+
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.paintImg = this.paintImg.bind(this);
+        this.isOutsideContainer = this.isOutsideContainer.bind(this);
+
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
+    }
+
+    handleArtistChange(e) {
+        this.setState({
+            includeArtist: e.target.checked,
+        });
+    }
+
+    handleLengthChange(e) {
+        this.setState({
+            includeLength: e.target.checked,
+        });
+    }
+
+    handleRemasteredChange(e) {
+        this.setState({
+            removeRemastered: e.target.checked,
+        });
     }
 
     handleURIChange(e) {
@@ -45,10 +73,12 @@ export default class CreatePolaroid extends Component {
         var type = "blank";
         var uri = this.state.uri;
 
+        // Parsing the resource type and setting the success message
         if (uri.startsWith("spotify:album:")) {
             id = uri.substring(14)
             type = "albums";
             this.setState({
+                errorMsg: "",
                 successMsg: "Selected album!",
             });
 
@@ -56,6 +86,7 @@ export default class CreatePolaroid extends Component {
             id = uri.substring(14)
             type = "tracks";
             this.setState({
+                errorMsg: "",
                 successMsg: "Selected track!",
             });
 
@@ -63,6 +94,7 @@ export default class CreatePolaroid extends Component {
             id = uri.substring(17)
             type = "playlists";
             this.setState({
+                errorMsg: "",
                 successMsg: "Selected playlist!",
             });
 
@@ -70,11 +102,21 @@ export default class CreatePolaroid extends Component {
             id = uri.substring(15);
             type = "artists";
             this.setState({
+                errorMsg: "",
                 successMsg: "Selected artist!",
             });
 
         } else {
+            // handling invalid uri and clearing all the data in the polaroid
+            document.getElementById("polaroid-album-art").setAttribute("src", "");
+            document.getElementById("polaroid-resource-title").innerHTML = "";
+            document.getElementById("polaroid-resource-year").innerHTML = "";
+            var resourceTracks = document.getElementById("polaroid-resource-tracks");
+            resourceTracks.innerHTML = "";
+
+            document.getElementById("polaroid-paper").hidden = true;
             this.setState({
+                successMsg: "",
                 errorMsg: "Invalid URI!",
             });
         }
@@ -86,19 +128,31 @@ export default class CreatePolaroid extends Component {
                 .then((response) => {
                     // Handle passed or failed responses
                     console.log(response);
+                    // If the response is valid then paint the image
                     if (response.status == 200) {
 
                         this.paintImg(response);
 
                     } else {
+                        // handling invalid uri and clearing all the data in the polaroid if fetch failed
+                        document.getElementById("polaroid-album-art").setAttribute("src", "");
+                        document.getElementById("polaroid-resource-title").innerHTML = "";
+                        document.getElementById("polaroid-resource-year").innerHTML = "";
+                        var resourceTracks = document.getElementById("polaroid-resource-tracks");
+                        resourceTracks.innerHTML = "";
+
+                        document.getElementById("polaroid-paper").hidden = true;
                         this.setState({
+                            successMsg: "",
                             errorMsg: "Error: " + response.errorMsg,
                         });
+
                     }
                 });
         }
     }
 
+    // Authenticate spotify scripts
     authenticateSpotify() {
         fetch("/is-authenticated")
             .then((response) => response.json())
@@ -114,104 +168,186 @@ export default class CreatePolaroid extends Component {
             });
     }
 
+    // This function is responsible for rendering the html elements in the polaroid
     paintImg(response) {
-        var canvas = document.getElementById("polaroid-canvas");
-        var context = canvas.getContext("2d");
+        // This checks if to remove remastered tags
+        if (this.state.removeRemastered) {
+            // Clearing title section
+            const titleSection = document.getElementById("polaroid-resource-title");
+            titleSection.innerHTML = "";
 
-        context.clearRect(0, 0, canvas.width, canvas.height);
+            // Splitting it by ( and adding first element generally removes remastered sign
+            const splitName = response.name.split('(');
 
-        context.beginPath();
-        context.rect(0, 0, 500, 800);
-        context.fillStyle = "#dcd9d2";
-        context.fill();
+            titleSection.innerHTML += splitName[0]
+
+            // This will account for cases where there's more than one () in album title
+            for (var i = 1; i < splitName.length - 1; i++) {
+                titleSection.innerHTML += "(" + splitName[i];
+            }
+        } else {
+            document.getElementById("polaroid-resource-title").innerHTML = response.name;
+        }
+
+        // Resetting track fontsize
+        document.getElementById("polaroid-resource-tracks").style.fontSize = '24px';
 
         switch (response.type) {
             case "album":
-                this.drawArt(response.images[0].url, context);
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
+                // Setting album art
+                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
 
-                    // Should turn next into function
-                    yloc += 28;
+                // Setting year style for this type
+                document.getElementById("polaroid-resource-year").style.fontStyle = "normal";
+                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
 
-                    context.font = "100 24px Oswald";
+                // Setting year for this type
+                document.getElementById("polaroid-resource-year").innerHTML = response.release_date.split('-')[0];
 
-                    context.fillText(response.release_date.split('-')[0], xloc, yloc);
+                // Reveal the document
+                document.getElementById("polaroid-paper").hidden = false;
 
-                    yloc += 28;
+                // The tracks in the album
+                const albumTracks = response.tracks.items;
 
-                    context.font = "24px Oswald";
+                // The container for track elements
+                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                trackContainer.innerHTML = "";
 
-                    var tracks = response.tracks.items
+                // Creates track elements in the countainer for each track in the album
+                albumTracks.forEach(function (track) {
+                    if (this.state.removeRemastered) {
+                        // Getting name and resetting it
+                        var trackname = track.name;
+                        track.name = "";
 
-                    for (var i = 0; i < tracks.length; i++) {
-                        var trackwords = tracks[i].name.split(' ');
+                        // Splitting it by ( and adding first element generally removes remastered sign
+                        const splitName = trackname.split('-');
 
-                        var line = '';
+                        track.name += splitName[0]
 
-                        for (var j = 0; j < trackwords.length; j++) {
-                            var testLine = line + trackwords[j] + ' ';
-                            var metrics = context.measureText(testLine);
-                            var testWidth = metrics.width;
-                            if (testWidth > 440 && j > 0) {
-                                context.fillText(line, xloc, yloc);
-                                line = trackwords[j] + ' ';
-                                yloc += 20;
-                            }
-                            else {
-                                line = testLine;
-                            }
-
+                        // This will account for cases where there's more than one () in album title
+                        for (var i = 1; i < splitName.length - 1; i++) {
+                            track.name += "-" + splitName[i];
                         }
-                        context.fillText(line, xloc, yloc);
-                        yloc += 20;
                     }
 
-                });
+                    var trackline = document.createElement("p");
+                    var trackname = document.createTextNode(track.name);
+                    trackline.appendChild(trackname);
+                    trackline.style.cssText = "margin-top: -20px;";
+                    trackline.className += "track-line";
+
+                    trackContainer.appendChild(trackline);
+                }, this);
+
+                // Gets the last child to see if it overflows
+                const lastChild = trackContainer.lastChild;
+                const canvas = document.getElementById("polaroid-canvas");
+
+                // While the last child is overflowing, reduce the font size
+                while (this.isOutsideContainer(canvas, lastChild)) {
+                    // Reducing font size by 1
+                    const fontSize = parseFloat(window.getComputedStyle(trackContainer, null).getPropertyValue('font-size'));
+                    trackContainer.style.fontSize = (fontSize - 1) + 'px';
+
+                    // Gets all the children
+                    var tracklines = document.getElementsByClassName('track-line');
+
+                    // Sets the children's margin to be a lil bigger (looks better)
+                    for (var i = 0; i < tracklines.length; i++) {
+                        var trackline = tracklines[i];
+                        var marginTop = parseFloat(window.getComputedStyle(trackline, null).getPropertyValue('margin-top'));
+                        trackline.style.marginTop = (marginTop + 1) + 'px';
+                    }
+                }
+
                 break;
 
             case "track":
-                this.drawArt(response.album.images[0].url, context);
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-                });
+                // Setting album art
+                document.getElementById("polaroid-album-art").setAttribute("src", response.album.images[0].url);
+
+                // Setting year resource styling
+                document.getElementById("polaroid-resource-year").style.fontStyle = "normal";
+                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+
+                // Setting year resource text
+                document.getElementById("polaroid-resource-year").innerHTML = response.artists[0].name + " - " + response.album.release_date.split('-')[0];
+
+                // Revealing the polaroid
+                document.getElementById("polaroid-paper").hidden = false;
+
+                // Clearing the tracklist. Should have other data here
+                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                trackContainer.innerHTML = "";
+
                 break;
 
             case "artist":
-                this.drawArt(response.images[0].url, context);
+                // Setting album art
+                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
 
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-                });
+                // Clearing year resource
+                document.getElementById("polaroid-resource-year").innerHTML = "";
+
+                // Revealing the polaroid
+                document.getElementById("polaroid-paper").hidden = false;
+
+                // Clearing the tracklist. Should have other data here
+                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                trackContainer.innerHTML = "";
+
                 break;
 
             case "playlist":
-                this.drawArt(response.images[0].url, context);
-                document.fonts.ready.then(function () {
-                    var xloc = 30;
-                    var yloc = drawTitle(response.name, context);
-                });
-                break;
+                // Setting album art
+                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
 
+                // Resetting year resource styling
+                document.getElementById("polaroid-resource-year").style.fontStyle = "italic";
+                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+
+                // Setting year resource text
+                document.getElementById("polaroid-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
+
+                // Revealing the polaroid
+                document.getElementById("polaroid-paper").hidden = false;
+
+                // Clearing the tracklist. Should have other data here
+                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                trackContainer.innerHTML = "";
+
+                break;
         }
 
+        // Separate image is necessary to avoid desync when loading image
+        var canvasimg = new Image();
+        canvasimg.onload = function () {
+            // Converting html image display into canvas image
+            html2canvas(document.getElementById("polaroid-canvas"), {
+                useCORS: true,
+            }).then(canvas => {
+                // document.body.appendChild(canvas);
+                // Displaying generated canvas (probs change to download)
+                var dataURL = canvas.toDataURL("image/png");
+                var newTab = window.open('about:blank', 'image from canvas');
+                newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
+            });
+        }
+        canvasimg.src = document.getElementById("polaroid-album-art").getAttribute("src");
 
 
 
     };
 
-    drawArt(imgURL, context) {
-        var img = new Image();
-        img.onload = function () {
-            context.drawImage(img, 30, 30, 440, 440);
-        }
-        img.src = imgURL;
+    // Checks if childDiv is outside the container
+    isOutsideContainer(parentDiv, childDiv) {
+        const parentRect = parentDiv.getBoundingClientRect();
+        const childRect = childDiv.getBoundingClientRect();
+
+        return parentRect.bottom - 15 < childRect.bottom;
     }
-
-
 
     render() {
         return (
@@ -246,14 +382,16 @@ export default class CreatePolaroid extends Component {
                         </Alert>
                     </Collapse>
                 </Grid>
+
                 <Grid
+                    container
+                    spacing={0}
+                    direction="row"
                     alignItems="center"
-                    justify="center"
-                    item
-                    xs={12}
-                    align="center"
+                    justifyContent="center"
+                    style={{ minHeight: '100vh' }}
                 >
-                    <Paper item pt={6} xs={3} component={Grid}>
+                    <Paper item pt={6} xs={3} component={Grid} mr={4}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -266,16 +404,20 @@ export default class CreatePolaroid extends Component {
                                     Options
                                 </FormHelperText>
 
-                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox defaultChecked />} label="Include Length" />
-                                </Tooltip>
                                 <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox defaultChecked />} label="Include Artist" />
+                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Artist"
+                                        onChange={this.handleArtistChange} />
+                                </Tooltip>
+                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
+                                    <FormControlLabel disabled control={<Checkbox />} label="Include Length"
+                                        onChange={this.handleLengthChange} />
                                 </Tooltip>
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="right">
-                                    <FormControlLabel control={<Checkbox />} label="Include Remastered" />
+                                    <FormControlLabel control={<Checkbox />} label="Remove Remastered Tags"
+                                        onChange={this.handleRemasteredChange} />
                                 </Tooltip>
-                                <TextField id="standard-basic" label="URI" variant="standard" onChange={this.handleURIChange} />
+                                <TextField id="standard-basic" label="URI" variant="standard"
+                                    onChange={this.handleURIChange} />
 
                                 <ScrollDialog />
 
@@ -298,45 +440,16 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <canvas id="polaroid-canvas" width="500" height="800">
-                        Your browser does not support the HTML canvas tag.
-                    </canvas>
-                    <span style={{ fontFamily: "Oswald", color: "#d0ccc4" }}>
-                        HELLO
-                    </span>
+                    <Paper id="polaroid-paper" item p={3} component={Grid} hidden={true} style={{
+                    }}>
+                        <Polaroid />
+                    </Paper>
+
 
                 </Grid>
 
             </Grid>
+
         );
     }
-}
-
-function drawTitle(title, context) {
-    context.font = "40px Oswald";
-    context.fillStyle = "#2c2b29";
-
-    var words = title.split(' ');
-    var line = '';
-    var xloc = 30;
-    var yloc = 510
-
-    for (var n = 0; n < words.length; n++) {
-
-        var testLine = line + words[n] + ' ';
-        var metrics = context.measureText(testLine);
-        var testWidth = metrics.width;
-        if (testWidth > 440 && n > 0) {
-            context.fillText(line, xloc, yloc);
-            line = words[n] + ' ';
-            yloc += 40;
-        }
-        else {
-            line = testLine;
-        }
-    }
-
-    context.fillText(line, xloc, yloc);
-
-    return yloc;
 }
