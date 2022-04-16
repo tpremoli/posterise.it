@@ -27,17 +27,20 @@ export default class CreatePolaroid extends Component {
             includeLength: false,
             removeRemastered: false,
         }
+        // Parameter methods
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleArtistChange = this.handleArtistChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
 
+        // Creation methods
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
         this.paintImg = this.paintImg.bind(this);
         this.fitTracks = this.fitTracks.bind(this);
         this.shrinkFont = this.shrinkFont.bind(this);
         this.isOutsideContainer = this.isOutsideContainer.bind(this);
 
+        // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
         this.authenticateSpotify();
     }
@@ -234,6 +237,7 @@ export default class CreatePolaroid extends Component {
                         }
                     }
 
+                    // Creating p element with necessary styling and classes.
                     var trackline = document.createElement("p");
                     var trackname = document.createTextNode(track.name);
                     trackline.appendChild(trackname);
@@ -243,6 +247,7 @@ export default class CreatePolaroid extends Component {
                     trackContainer.appendChild(trackline);
                 }, this);
 
+                // Make sure that all the tracks fit the container and fix it.
                 this.fitTracks(trackContainer);
 
                 break;
@@ -318,9 +323,8 @@ export default class CreatePolaroid extends Component {
                 newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
             });
         }
+
         canvasimg.src = document.getElementById("polaroid-album-art").getAttribute("src");
-
-
 
     };
 
@@ -329,19 +333,24 @@ export default class CreatePolaroid extends Component {
         var lastChild = trackContainer.lastChild;
         const canvas = document.getElementById("polaroid-canvas");
 
+        // Shrink to minimum font size of 20 (good level)
         this.shrinkFont(trackContainer, 20);
 
+        // Squash to points to the location where the two tracks will be squashed into one p element
         var squashTo = trackContainer.firstChild;
 
-        // While the last child is overflowing, reduce the font size
+        // While the tracks are overflowing and we haven't squashed everything yet this squashes.
         while (this.isOutsideContainer(canvas, lastChild) && squashTo != lastChild) {
+            // Sets the squashto innerhtml to include the next track's name
             squashTo.innerHTML = squashTo.innerHTML.trim() + " / " + squashTo.nextSibling.innerHTML;
+
+            // Removes the next track and sets squashto to next value
             squashTo.nextSibling.remove();
             squashTo = squashTo.nextSibling;
         }
 
+        // Checks if last child is still out of the container. if so shrink with no min value.
         lastChild = trackContainer.lastChild;
-
         if(this.isOutsideContainer(canvas, lastChild)){
             this.shrinkFont(trackContainer);
         }
@@ -361,7 +370,7 @@ export default class CreatePolaroid extends Component {
             // Gets all the children
             var tracklines = document.getElementsByClassName('track-line');
 
-            // Sets the children's margin to be a lil bigger (looks better)
+            // Sets the children's margin to be a lil bigger after shrinking (looks better)
             for (var i = 0; i < tracklines.length; i++) {
                 var trackline = tracklines[i];
                 var marginTop = parseFloat(window.getComputedStyle(trackline, null).getPropertyValue('margin-top'));
@@ -473,7 +482,6 @@ export default class CreatePolaroid extends Component {
                     }}>
                         <Polaroid />
                     </Paper>
-
 
                 </Grid>
 

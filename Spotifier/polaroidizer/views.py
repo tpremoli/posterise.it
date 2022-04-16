@@ -68,7 +68,7 @@ class Polaroidize(APIView):
             response = execute_spotify_api_request(
                 self.request.session.session_key, endpoint, post_=False, put_=False)
 
-            # Probably not best practice
+            # If there's an issue we add info and return to user.
             if "error" in response:
                 statuscode = {
                     "status": response["error"]["status"], "errorMsg": response["error"]["message"]}
