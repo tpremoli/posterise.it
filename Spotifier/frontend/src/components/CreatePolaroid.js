@@ -15,7 +15,6 @@ import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import URIHelpDialog from "./URIHelpDialog.js";
 import Polaroid from "./Polaroid.js";
-import CustomizePaper from "./CustomizePaper.js";
 import html2canvas from 'html2canvas';
 
 export default class CreatePolaroid extends Component {
@@ -47,6 +46,7 @@ export default class CreatePolaroid extends Component {
 
         // Customization methods
         this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
+        this.handleColorChange = this.handleColorChange.bind(this);
 
         // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
@@ -155,13 +155,12 @@ export default class CreatePolaroid extends Component {
 
                         document.getElementById("create-page").hidden = true;
                         document.getElementById("customize-page").hidden = false;
-
                         this.setState({
+                            removeRemastered: false,
                             response: response,
-                        })
-
-                        this.paintImg(response);
-
+                        }, () => {
+                            this.paintImg((JSON.parse(JSON.stringify(response))));
+                        });
                     } else {
                         // handling invalid uri and clearing all the data in the polaroid if fetch failed
                         this.clearPolaroid();
@@ -411,11 +410,18 @@ export default class CreatePolaroid extends Component {
     }
 
     handleColorChange(e) {
-        switch (e.target.value){
+        switch (e.target.value) {
             case "Inverted":
+                document.getElementById("polaroid-canvas").style.backgroundColor = "#2c2b29";
+                document.getElementById("polaroid-resource-title").style.color = "#dcd9d2";
+                document.getElementById("polaroid-resource-year").style.color = "#dcd9d2";
+                document.getElementById("polaroid-resource-tracks").style.color = "#dcd9d2";
                 break;
-            case "Default":
             default:
+                document.getElementById("polaroid-canvas").style.backgroundColor = "#dcd9d2";
+                document.getElementById("polaroid-resource-title").style.color = "#2c2b29";
+                document.getElementById("polaroid-resource-year").style.color = "#2c2b29";
+                document.getElementById("polaroid-resource-tracks").style.color = "#2c2b29";
         }
     }
 
@@ -526,7 +532,7 @@ export default class CreatePolaroid extends Component {
                                 <RadioGroup row label="Color scheme" defaultValue="Default" onChange={this.handleColorChange}>
                                     <FormControlLabel control={<Radio />} value="Default" label="Default" />
                                     <FormControlLabel control={<Radio />} value="Inverted" label="Inverted" />
-                                    <Tooltip title="Not yet implemented!" arrow placement="right">
+                                    <Tooltip title="Not yet implemented!" arrow placement="bottom">
                                         <FormControlLabel disabled control={<Radio />} value="Sample" label="Color sample" />
                                     </Tooltip>
                                 </RadioGroup>
@@ -546,7 +552,7 @@ export default class CreatePolaroid extends Component {
 
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left"
                                     onChange={this.handleRemasteredChange} >
-                                    <FormControlLabel control={<Switch />} label="Remove Remastered Tags" />
+                                    <FormControlLabel checked={this.state.removeRemastered} control={<Switch />} label="Remove Remastered Tags" />
                                 </Tooltip>
 
 
