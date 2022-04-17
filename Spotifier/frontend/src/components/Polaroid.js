@@ -4,7 +4,7 @@ export default function Polaroid() {
 
     return (
         <div id="polaroid-canvas" style={{
-            backgroundColor: "#dcd9d2", width: 500, height: 800, margin: 10,
+            backgroundColor: "#dcd9d2", width: 500, height: 800, margin: 0,
         }} >
             <img style={{
                 width: 430, height: 435, marginTop: 30, marginRight: 35, marginLeft: 35, marginBottom: 0,

@@ -87,7 +87,7 @@ export default function URIHelpDialog() {
                                     <ContentCopyIcon color="primary" />
                                 </IconButton>
                             </Tooltip>
-                            Album: <code>spotify:album:0ETFjACtuP2ADo6LFhL6HN </code>
+                            Album: <code style={{wordWrap: "break-word"}}>spotify:album:0ETFjACtuP2ADo6LFhL6HN </code>
 
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
@@ -101,7 +101,7 @@ export default function URIHelpDialog() {
                                     <ContentCopyIcon color="primary" />
                                 </IconButton>
                             </Tooltip>
-                            Track: <code>spotify:track:4cOdK2wGLETKBW3PvgPWqT</code>
+                            Track: <code style={{wordWrap: "break-word"}}>spotify:track:4cOdK2wGLETKBW3PvgPWqT</code>
 
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
@@ -115,7 +115,7 @@ export default function URIHelpDialog() {
                                     <ContentCopyIcon color="primary" />
                                 </IconButton>
                             </Tooltip>
-                            Artist: <code>spotify:artist:0k17h0D3J5VfsdmQ1iZtE9</code>
+                            Artist: <code style={{wordWrap: "break-word"}}>spotify:artist:0k17h0D3J5VfsdmQ1iZtE9</code>
 
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
@@ -129,7 +129,7 @@ export default function URIHelpDialog() {
                                     <ContentCopyIcon color="primary" />
                                 </IconButton>
                             </Tooltip>
-                            Playlist: <code>spotify:playlist:2DFRAWTSAuiqdikofkLJ3F</code>
+                            Playlist: <code style={{wordWrap: "break-word"}}>spotify:playlist:2DFRAWTSAuiqdikofkLJ3F</code>
 
                         </Typography>
 

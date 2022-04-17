@@ -241,6 +241,7 @@ export default class CreatePolaroid extends Component {
 
                 // Reveal the document
                 document.getElementById("polaroid-paper").hidden = false;
+                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
 
                 // The tracks in the album
                 const albumTracks = response.tracks.items;
@@ -295,6 +296,7 @@ export default class CreatePolaroid extends Component {
 
                 // Revealing the polaroid
                 document.getElementById("polaroid-paper").hidden = false;
+                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("polaroid-resource-tracks");
@@ -311,6 +313,7 @@ export default class CreatePolaroid extends Component {
 
                 // Revealing the polaroid
                 document.getElementById("polaroid-paper").hidden = false;
+                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("polaroid-resource-tracks");
@@ -480,7 +483,7 @@ export default class CreatePolaroid extends Component {
                     style={{ minHeight: '100vh' }}
                     hidden={false}
                 >
-                    <Paper id="create-page" item pt={6} component={Grid} m={3}>
+                    <Paper id="create-page" item p={3} m={3} component={Grid} >
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -528,7 +531,7 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <Paper id="customize-page" item pt={6} component={Grid} hidden={true}>
+                    <Paper id="customize-page" item p={3} m={3} component={Grid} hidden={true}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Customize Poster
@@ -586,15 +589,10 @@ export default class CreatePolaroid extends Component {
                     </Paper>
 
 
-                    <Paper id="polaroid-paper" item component={Grid} hidden={true} style={{
-                        transform: "scale(0.8, 0.8)", padding: 8, 
+                    <Paper id="polaroid-paper" m={3} p={3} item component={Grid} hidden={true} style={{
                     }}>
                         <Polaroid />
                     </Paper>
-
-                    <Grid item xs={12} pb={2} align="center">
-
-                    </Grid>
 
                 </Grid>
 
