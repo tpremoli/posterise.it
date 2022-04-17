@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import AuthURL, spotify_callback, IsAuthenticated, Polaroidize
+from .views import AuthURL, spotify_callback, IsAuthenticated, Posterise
 
 urlpatterns = [
     path('get-auth-url', AuthURL.as_view()),
     path('redirect', spotify_callback),
     path('is-authenticated', IsAuthenticated.as_view()),
-    path('polaroidize/', Polaroidize.as_view())
+    path('posterise/', Posterise.as_view())
 ]

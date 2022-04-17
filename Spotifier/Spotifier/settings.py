@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polaroidizer.apps.PolaroidizerConfig',
+    'posteriser.apps.PosteriserConfig',
     'frontend.apps.FrontendConfig',
     'api.apps.ApiConfig',
     'rest_framework',

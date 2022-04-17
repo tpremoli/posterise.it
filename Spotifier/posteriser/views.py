@@ -45,7 +45,7 @@ def spotify_callback(request, format=None):
     update_or_create_user_tokens(
         request.session.session_key, access_token, token_type, expires_in, refresh_token)
 
-    return redirect('/create-polaroid')
+    return redirect('/create-poster')
 
 # API auth
 class IsAuthenticated(APIView):
@@ -56,7 +56,7 @@ class IsAuthenticated(APIView):
         return Response({'status': is_authenticated}, status=status.HTTP_200_OK)
 
 # Executes spotify api requests
-class Polaroidize(APIView):
+class Posterise(APIView):
     def get(self, request, format=None, **kwargs):
         is_authenticated = is_spotify_authenticated(
             self.request.session.session_key

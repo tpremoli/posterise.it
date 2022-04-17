@@ -1,8 +1,8 @@
-# Polaroidizer
+# Posteriser
 
 ## Introduction
 
-Polaroidizer is a simple web app that takes advantage of Spotify APIs in order to generate Pinterest-style polaroid posters, quickly and efficiently.
+Posteriser is a simple web app that takes advantage of Spotify APIs in order to generate Pinterest-style album posters, quickly and efficiently.
 
 ## Prerequisites:
 In the root directory (/Spotifier) run:
@@ -31,9 +31,9 @@ To actually run it:
 
 ## Getting Started
 
-Make sure you are in the Polaroidizer directory:
+Make sure you are in the Posteriser directory:
 
-    cd Polaroidizer
+    cd Posteriser
     
 Then run:
 

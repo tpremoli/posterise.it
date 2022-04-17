@@ -14,10 +14,11 @@ import Radio from '@mui/material/Radio';
 import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import URIHelpDialog from "./URIHelpDialog.js";
-import Polaroid from "./Polaroid.js";
+import Poster from "./Poster.js";
 import html2canvas from 'html2canvas';
 
-export default class CreatePolaroid extends Component {
+export default class CreatePoster
+ extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -53,7 +54,7 @@ export default class CreatePolaroid extends Component {
         this.authenticateSpotify();
 
         // Utility methods
-        this.clearPolaroid = this.clearPolaroid.bind(this);
+        this.clearPoster = this.clearPoster.bind(this);
         this.handleDownload = this.handleDownload.bind(this);
         this.getURI = this.getURI.bind(this);
     }
@@ -63,7 +64,7 @@ export default class CreatePolaroid extends Component {
         this.setState({
             includeArtist: e.target.checked,
         }, () => {
-            var resourceloc = document.getElementById("polaroid-resource-year");
+            var resourceloc = document.getElementById("poster-resource-year");
             if (this.state.includeArtist) {
                 if (this.state.response.type == "album" || this.state.response.type == "track") {
                     resourceloc.innerHTML = this.state.response.artists[0].name;
@@ -86,7 +87,7 @@ export default class CreatePolaroid extends Component {
     // This method renders the artist name depending on what option the user has selected
     // (This runs when painting tracks/albums)
     handleArtistName() {
-        var resourceloc = document.getElementById("polaroid-resource-year");
+        var resourceloc = document.getElementById("poster-resource-year");
         if (this.state.includeArtist) {
             resourceloc.innerHTML = this.state.response.artists[0].name;
             if (this.state.response.type == "album")
@@ -124,17 +125,17 @@ export default class CreatePolaroid extends Component {
     }
 
     handleReturnPressed(e) {
-        this.clearPolaroid();
+        this.clearPoster();
         document.getElementById("customize-page").hidden = true;
         document.getElementById("create-page").hidden = false;
     }
 
     // Download button
     handleDownload() {
-        document.getElementById("polaroid-paper").style.transform = "scale(1, 1)";
+        document.getElementById("poster-paper").style.transform = "scale(1, 1)";
 
         // Converting html image display into canvas image
-        html2canvas(document.getElementById("polaroid-canvas"), {
+        html2canvas(document.getElementById("poster-canvas"), {
             useCORS: true, scale: 3,
         }).then(canvas => {
             // Displaying generated canvas (probs change to download)
@@ -148,7 +149,7 @@ export default class CreatePolaroid extends Component {
             document.body.removeChild(link);
         });
 
-        document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
+        document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
     }
 
     // Converts links to URIs
@@ -221,8 +222,8 @@ export default class CreatePolaroid extends Component {
             });
 
         } else {
-            // handling invalid uri and clearing all the data in the polaroid
-            this.clearPolaroid();
+            // handling invalid uri and clearing all the data in the poster
+            this.clearPoster();
 
             this.setState({
                 successMsg: "",
@@ -233,7 +234,7 @@ export default class CreatePolaroid extends Component {
 
         if (type != "blank") {
             // Execute API calls and handle data
-            fetch("/polaroidize/?id=" + id + "&type=" + type, requestOptions)
+            fetch("/posterise/?id=" + id + "&type=" + type, requestOptions)
                 .then((response) => response.json())
                 .then((response) => {
                     // Handle passed or failed responses
@@ -251,8 +252,8 @@ export default class CreatePolaroid extends Component {
                         });
 
                     } else {
-                        // handling invalid uri and clearing all the data in the polaroid if fetch failed
-                        this.clearPolaroid();
+                        // handling invalid uri and clearing all the data in the poster if fetch failed
+                        this.clearPoster();
                         this.setState({
                             successMsg: "",
                             errorMsg: "Error: " + response.errorMsg,
@@ -263,16 +264,16 @@ export default class CreatePolaroid extends Component {
         }
     }
 
-    // Clears polaroid data
-    clearPolaroid() {
-        // handling invalid uri and clearing all the data in the polaroid
-        document.getElementById("polaroid-album-art").setAttribute("src", "");
-        document.getElementById("polaroid-resource-title").innerHTML = "";
-        document.getElementById("polaroid-resource-year").innerHTML = "";
-        var resourceTracks = document.getElementById("polaroid-resource-tracks");
+    // Clears poster data
+    clearPoster() {
+        // handling invalid uri and clearing all the data in the poster
+        document.getElementById("poster-album-art").setAttribute("src", "");
+        document.getElementById("poster-resource-title").innerHTML = "";
+        document.getElementById("poster-resource-year").innerHTML = "";
+        var resourceTracks = document.getElementById("poster-resource-tracks");
         resourceTracks.innerHTML = "";
 
-        document.getElementById("polaroid-paper").hidden = true;
+        document.getElementById("poster-paper").hidden = true;
     }
 
     // Authenticate spotify scripts
@@ -291,12 +292,12 @@ export default class CreatePolaroid extends Component {
             });
     }
 
-    // This function is responsible for rendering the html elements in the polaroid
+    // This function is responsible for rendering the html elements in the poster
     paintImg(response) {
         // This checks if to remove remastered tags
         if (this.state.removeRemastered) {
             // Clearing title section
-            const titleSection = document.getElementById("polaroid-resource-title");
+            const titleSection = document.getElementById("poster-resource-title");
             titleSection.innerHTML = "";
 
             // Splitting it by ( and adding first element generally removes remastered sign
@@ -309,33 +310,33 @@ export default class CreatePolaroid extends Component {
                 titleSection.innerHTML += "(" + splitName[i];
             }
         } else {
-            document.getElementById("polaroid-resource-title").innerHTML = response.name;
+            document.getElementById("poster-resource-title").innerHTML = response.name;
         }
 
         // Resetting track fontsize
-        document.getElementById("polaroid-resource-tracks").style.fontSize = '24px';
+        document.getElementById("poster-resource-tracks").style.fontSize = '24px';
 
         switch (response.type) {
             case "album":
                 // Setting album art
-                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+                document.getElementById("poster-album-art").setAttribute("src", response.images[0].url);
 
                 // Setting year style for this type
-                document.getElementById("polaroid-resource-year").style.fontStyle = "normal";
-                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+                document.getElementById("poster-resource-year").style.fontStyle = "normal";
+                document.getElementById("poster-resource-year").style.fontWeight = 300;
 
                 // Setting year for this type
                 this.handleArtistName();
 
                 // Reveal the document
-                document.getElementById("polaroid-paper").hidden = false;
-                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
+                document.getElementById("poster-paper").hidden = false;
+                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
 
                 // The tracks in the album
                 const albumTracks = response.tracks.items;
 
                 // The container for track elements
-                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
 
                 // Creates track elements in the countainer for each track in the album
@@ -373,59 +374,59 @@ export default class CreatePolaroid extends Component {
 
             case "track":
                 // Setting album art
-                document.getElementById("polaroid-album-art").setAttribute("src", response.album.images[0].url);
+                document.getElementById("poster-album-art").setAttribute("src", response.album.images[0].url);
 
                 // Setting year resource styling
-                document.getElementById("polaroid-resource-year").style.fontStyle = "normal";
-                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+                document.getElementById("poster-resource-year").style.fontStyle = "normal";
+                document.getElementById("poster-resource-year").style.fontWeight = 300;
 
                 // Setting year resource text
                 this.handleArtistName();
 
-                // Revealing the polaroid
-                document.getElementById("polaroid-paper").hidden = false;
-                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
+                // Revealing the poster
+                document.getElementById("poster-paper").hidden = false;
+                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
 
                 // Clearing the tracklist. Should have other data here
-                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
 
                 break;
 
             case "artist":
                 // Setting album art
-                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+                document.getElementById("poster-album-art").setAttribute("src", response.images[0].url);
 
                 // Clearing year resource
-                document.getElementById("polaroid-resource-year").innerHTML = "";
+                document.getElementById("poster-resource-year").innerHTML = "";
 
-                // Revealing the polaroid
-                document.getElementById("polaroid-paper").hidden = false;
-                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
+                // Revealing the poster
+                document.getElementById("poster-paper").hidden = false;
+                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
 
                 // Clearing the tracklist. Should have other data here
-                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
 
                 break;
 
             case "playlist":
                 // Setting album art
-                document.getElementById("polaroid-album-art").setAttribute("src", response.images[0].url);
+                document.getElementById("poster-album-art").setAttribute("src", response.images[0].url);
 
                 // Resetting year resource styling
-                document.getElementById("polaroid-resource-year").style.fontStyle = "italic";
-                document.getElementById("polaroid-resource-year").style.fontWeight = 300;
+                document.getElementById("poster-resource-year").style.fontStyle = "italic";
+                document.getElementById("poster-resource-year").style.fontWeight = 300;
 
                 // Setting year resource text
-                document.getElementById("polaroid-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
+                document.getElementById("poster-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
 
-                // Revealing the polaroid
-                document.getElementById("polaroid-paper").hidden = false;
-                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
+                // Revealing the poster
+                document.getElementById("poster-paper").hidden = false;
+                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
 
                 // Clearing the tracklist. Should have other data here
-                var trackContainer = document.getElementById("polaroid-resource-tracks");
+                var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
 
                 break;
@@ -437,7 +438,7 @@ export default class CreatePolaroid extends Component {
     fitTracks(trackContainer) {
         // Gets the last child to see if it overflows
         var lastChild = trackContainer.lastChild;
-        const canvas = document.getElementById("polaroid-canvas");
+        const canvas = document.getElementById("poster-canvas");
 
         // Shrink to minimum font size of 20 (good level)
         this.shrinkFont(trackContainer, 20);
@@ -465,7 +466,7 @@ export default class CreatePolaroid extends Component {
     // Shrinks tracks font until reaching minimum font size
     shrinkFont(trackContainer, minFontSize = 0) {
         const lastChild = trackContainer.lastChild;
-        const canvas = document.getElementById("polaroid-canvas");
+        const canvas = document.getElementById("poster-canvas");
         var fontSize = parseFloat(window.getComputedStyle(trackContainer, null).getPropertyValue('font-size'));
 
         // While the last child is overflowing, reduce the font size
@@ -492,16 +493,16 @@ export default class CreatePolaroid extends Component {
     handleColorChange(e) {
         switch (e.target.value) {
             case "Inverted":
-                document.getElementById("polaroid-canvas").style.backgroundColor = "#2c2b29";
-                document.getElementById("polaroid-resource-title").style.color = "#dcd9d2";
-                document.getElementById("polaroid-resource-year").style.color = "#dcd9d2";
-                document.getElementById("polaroid-resource-tracks").style.color = "#dcd9d2";
+                document.getElementById("poster-canvas").style.backgroundColor = "#2c2b29";
+                document.getElementById("poster-resource-title").style.color = "#dcd9d2";
+                document.getElementById("poster-resource-year").style.color = "#dcd9d2";
+                document.getElementById("poster-resource-tracks").style.color = "#dcd9d2";
                 break;
             default:
-                document.getElementById("polaroid-canvas").style.backgroundColor = "#dcd9d2";
-                document.getElementById("polaroid-resource-title").style.color = "#2c2b29";
-                document.getElementById("polaroid-resource-year").style.color = "#2c2b29";
-                document.getElementById("polaroid-resource-tracks").style.color = "#2c2b29";
+                document.getElementById("poster-canvas").style.backgroundColor = "#dcd9d2";
+                document.getElementById("poster-resource-title").style.color = "#2c2b29";
+                document.getElementById("poster-resource-year").style.color = "#2c2b29";
+                document.getElementById("poster-resource-tracks").style.color = "#2c2b29";
         }
     }
 
@@ -559,7 +560,7 @@ export default class CreatePolaroid extends Component {
                     <Paper id="create-page" item p={3} m={3} component={Grid} >
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
-                                Create A Polaroid!
+                                Create A Poster!
                             </Typography>
                             <p style={{
                                 fontFamily: "Oswald", color: "#f7f2eb", fontSize: "1px", fontWeight: 400,
@@ -590,7 +591,7 @@ export default class CreatePolaroid extends Component {
                                 variant="contained"
                                 onClick={this.handleCreateButtonPressed}
                             >
-                                Create Polaroid!
+                                Create Poster!
                             </Button>
                         </Grid>
                         <Grid item xs={12} pb={6} align="center">
@@ -622,13 +623,9 @@ export default class CreatePolaroid extends Component {
                                 </RadioGroup>
 
 
-                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="left">
+                                <Tooltip title="Include the artist's name in the poster design!" arrow placement="left">
                                     <FormControlLabel control={<Switch />} label="Include Artist"
                                         onChange={this.handleArtistChange} />
-                                </Tooltip>
-
-                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="left">
-                                    <FormControlLabel disabled control={<Switch />} label="Include Length" />
                                 </Tooltip>
 
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left">
@@ -652,9 +649,9 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <Paper id="polaroid-paper" m={3} p={3} item component={Grid} hidden={true} style={{
+                    <Paper id="poster-paper" m={3} p={3} item component={Grid} hidden={true} style={{
                     }}>
-                        <Polaroid />
+                        <Poster />
                     </Paper>
 
                 </Grid>

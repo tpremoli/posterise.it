@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PolaroidizerConfig(AppConfig):
+class PosteriserConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'polaroidizer'
+    name = 'posteriser'
