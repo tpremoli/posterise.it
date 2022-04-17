@@ -410,7 +410,7 @@ export default class CreatePolaroid extends Component {
             }
 
         }
-        
+
     }
 
     handleColorChange(e) {
@@ -480,7 +480,7 @@ export default class CreatePolaroid extends Component {
                     style={{ minHeight: '100vh' }}
                     hidden={false}
                 >
-                    <Paper id="create-page" item pt={6} xs={3} component={Grid} mr={4}>
+                    <Paper id="create-page" item pt={6} component={Grid} m={3}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
@@ -501,7 +501,7 @@ export default class CreatePolaroid extends Component {
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
+                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="left">
                                     <FormControlLabel disabled control={<Checkbox />} label="Include Length"
                                         onChange={this.handleLengthChange} />
                                 </Tooltip>
@@ -528,7 +528,7 @@ export default class CreatePolaroid extends Component {
                         </Grid>
                     </Paper>
 
-                    <Paper id="customize-page" item pt={6} xs={3} component={Grid} mr={4} hidden={true}>
+                    <Paper id="customize-page" item pt={6} component={Grid} hidden={true}>
                         <Grid item xs={12} align="center" >
                             <Typography component="h4" variant="h4">
                                 Customize Poster
@@ -586,10 +586,15 @@ export default class CreatePolaroid extends Component {
                     </Paper>
 
 
-                    <Paper id="polaroid-paper" item p={2} component={Grid} hidden={true} style={{
+                    <Paper id="polaroid-paper" item component={Grid} hidden={true} style={{
+                        transform: "scale(0.8, 0.8)", padding: 8, 
                     }}>
                         <Polaroid />
                     </Paper>
+
+                    <Grid item xs={12} pb={2} align="center">
+
+                    </Grid>
 
                 </Grid>
 
