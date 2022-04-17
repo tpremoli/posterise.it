@@ -41,7 +41,6 @@ export default class CreatePolaroid extends Component {
         this.fitTracks = this.fitTracks.bind(this);
         this.shrinkFont = this.shrinkFont.bind(this);
         this.isOutsideContainer = this.isOutsideContainer.bind(this);
-        this.generateImageFromHTML = this.generateImageFromHTML.bind(this);
 
         // Customization methods
         this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
@@ -54,6 +53,7 @@ export default class CreatePolaroid extends Component {
 
         // Utility methods
         this.clearPolaroid = this.clearPolaroid.bind(this);
+        this.handleDownload = this.handleDownload.bind(this);
     }
 
     handleArtistChange(e) {
@@ -89,6 +89,29 @@ export default class CreatePolaroid extends Component {
         document.getElementById("customize-page").hidden = true;
         document.getElementById("create-page").hidden = false;
 
+    }
+
+    handleDownload() {
+        document.getElementById("polaroid-paper").style.transform = "scale(1, 1)";
+
+        console.log(window.devicePixelRatio);
+
+        // Converting html image display into canvas image
+        html2canvas(document.getElementById("polaroid-canvas"), {
+            useCORS: true, scale:3,
+        }).then(canvas => {
+            // Displaying generated canvas (probs change to download)
+            var dataURL = canvas.toDataURL("image/png");
+
+            var link = document.createElement("a");
+            link.download = this.state.response.name+"poster.png";
+            link.href = dataURL;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
     }
 
     handleCreateButtonPressed() {
@@ -334,6 +357,7 @@ export default class CreatePolaroid extends Component {
 
                 // Revealing the polaroid
                 document.getElementById("polaroid-paper").hidden = false;
+                document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("polaroid-resource-tracks");
@@ -342,26 +366,7 @@ export default class CreatePolaroid extends Component {
                 break;
         }
         document.getElementById("create-page").hidden = true;
-        // this.generateImageFromHTML();
     };
-
-    generateImageFromHTML() {
-        // Separate image is necessary to avoid desync when loading image
-        var canvasimg = new Image();
-        canvasimg.onload = function () {
-            // Converting html image display into canvas image
-            html2canvas(document.getElementById("polaroid-canvas"), {
-                useCORS: true,
-            }).then(canvas => {
-                // document.body.appendChild(canvas);
-                // Displaying generated canvas (probs change to download)
-                var dataURL = canvas.toDataURL("image/png");
-                var newTab = window.open('about:blank', 'image from canvas');
-                newTab.document.write("<img src='" + dataURL + "' alt='from canvas'/>");
-            });
-        }
-        canvasimg.src = document.getElementById("polaroid-album-art").getAttribute("src");
-    }
 
     fitTracks(trackContainer) {
         // Gets the last child to see if it overflows
@@ -577,7 +582,7 @@ export default class CreatePolaroid extends Component {
 
 
                         <Grid item xs={12} pb={2} align="center">
-                            <Button color="success" variant="contained">
+                            <Button color="success" variant="contained" onClick={this.handleDownload}>
                                 Download!
                             </Button>
                         </Grid>
