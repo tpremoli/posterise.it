@@ -25,7 +25,7 @@ export default class CreatePolaroid extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
-            includeArtist: true,
+            includeArtist: false,
             includeLength: false,
             removeRemastered: false,
             response: null,
@@ -34,6 +34,7 @@ export default class CreatePolaroid extends Component {
         this.handleURIChange = this.handleURIChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleReturnPressed = this.handleReturnPressed.bind(this);
+        this.handleArtistName = this.handleArtistName.bind(this);
 
         // Creation methods
         this.handleCreateButtonPressed = this.handleCreateButtonPressed.bind(this);
@@ -60,8 +61,39 @@ export default class CreatePolaroid extends Component {
         this.setState({
             includeArtist: e.target.checked,
         }, () => {
-            this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
+            var resourceloc = document.getElementById("polaroid-resource-year");
+            if (this.state.includeArtist) {
+                if (this.state.response.type == "album" || this.state.response.type == "track") {
+                    resourceloc.innerHTML = this.state.response.artists[0].name;
+                    if (this.state.response.type == "album")
+                        resourceloc.innerHTML += " - " + this.state.response.release_date.split('-')[0];
+                    else
+                        resourceloc.innerHTML += " - " + this.state.response.album.release_date.split('-')[0];
+                }
+            } else {
+                if (this.state.response.type == "album" || this.state.response.type == "track") {
+                    if (this.state.response.type == "album")
+                        resourceloc.innerHTML = this.state.response.release_date.split('-')[0];
+                    else
+                        resourceloc.innerHTML = this.state.response.album.release_date.split('-')[0];
+                }
+            }
         });
+    }
+    handleArtistName() {
+        var resourceloc = document.getElementById("polaroid-resource-year");
+        if (this.state.includeArtist) {
+            resourceloc.innerHTML = this.state.response.artists[0].name;
+            if (this.state.response.type == "album")
+                resourceloc.innerHTML += " - " + this.state.response.release_date.split('-')[0];
+            else
+                resourceloc.innerHTML += " - " + this.state.response.album.release_date.split('-')[0];
+        } else {
+            if (this.state.response.type == "album")
+                resourceloc.innerHTML = this.state.response.release_date.split('-')[0];
+            else
+                resourceloc.innerHTML = this.state.response.album.release_date.split('-')[0];
+        }
     }
 
     handleLengthChange(e) {
@@ -98,13 +130,13 @@ export default class CreatePolaroid extends Component {
 
         // Converting html image display into canvas image
         html2canvas(document.getElementById("polaroid-canvas"), {
-            useCORS: true, scale:3,
+            useCORS: true, scale: 3,
         }).then(canvas => {
             // Displaying generated canvas (probs change to download)
             var dataURL = canvas.toDataURL("image/png");
 
             var link = document.createElement("a");
-            link.download = this.state.response.name+"poster.png";
+            link.download = this.state.response.name + "poster.png";
             link.href = dataURL;
             document.body.appendChild(link);
             link.click();
@@ -260,7 +292,7 @@ export default class CreatePolaroid extends Component {
                 document.getElementById("polaroid-resource-year").style.fontWeight = 300;
 
                 // Setting year for this type
-                document.getElementById("polaroid-resource-year").innerHTML = response.release_date.split('-')[0];
+                this.handleArtistName();
 
                 // Reveal the document
                 document.getElementById("polaroid-paper").hidden = false;
@@ -315,7 +347,7 @@ export default class CreatePolaroid extends Component {
                 document.getElementById("polaroid-resource-year").style.fontWeight = 300;
 
                 // Setting year resource text
-                document.getElementById("polaroid-resource-year").innerHTML = response.artists[0].name + " - " + response.album.release_date.split('-')[0];
+                this.handleArtistName();
 
                 // Revealing the polaroid
                 document.getElementById("polaroid-paper").hidden = false;
@@ -509,10 +541,6 @@ export default class CreatePolaroid extends Component {
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="left">
-                                    <FormControlLabel disabled control={<Checkbox />} label="Include Length"
-                                        onChange={this.handleLengthChange} />
-                                </Tooltip>
                                 <TextField id="standard-basic" label="URI" variant="standard"
                                     onChange={this.handleURIChange} />
                                 <URIHelpDialog />
@@ -558,17 +586,13 @@ export default class CreatePolaroid extends Component {
                                 </RadioGroup>
 
 
-                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
+                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="left">
                                     <FormControlLabel control={<Switch />} label="Include Artist"
                                         onChange={this.handleArtistChange} />
                                 </Tooltip>
 
                                 <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="left">
                                     <FormControlLabel disabled control={<Switch />} label="Include Length" />
-                                </Tooltip>
-
-                                <Tooltip title="Limits tracklist to one song per line" arrow placement="left">
-                                    <FormControlLabel disabled control={<Switch />} label="One track per line" />
                                 </Tooltip>
 
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left">
