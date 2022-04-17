@@ -55,8 +55,10 @@ export default class CreatePolaroid extends Component {
         // Utility methods
         this.clearPolaroid = this.clearPolaroid.bind(this);
         this.handleDownload = this.handleDownload.bind(this);
+        this.getURI = this.getURI.bind(this);
     }
 
+    // This method handles rendering the artist name when the flip is switched
     handleArtistChange(e) {
         this.setState({
             includeArtist: e.target.checked,
@@ -80,6 +82,9 @@ export default class CreatePolaroid extends Component {
             }
         });
     }
+
+    // This method renders the artist name depending on what option the user has selected
+    // (This runs when painting tracks/albums)
     handleArtistName() {
         var resourceloc = document.getElementById("polaroid-resource-year");
         if (this.state.includeArtist) {
@@ -113,6 +118,8 @@ export default class CreatePolaroid extends Component {
     handleURIChange(e) {
         this.setState({
             uri: e.target.value,
+        }, ()=>{
+            console.log(this.state.uri);
         });
     }
 
@@ -120,13 +127,11 @@ export default class CreatePolaroid extends Component {
         this.clearPolaroid();
         document.getElementById("customize-page").hidden = true;
         document.getElementById("create-page").hidden = false;
-
     }
 
+    // Download button
     handleDownload() {
         document.getElementById("polaroid-paper").style.transform = "scale(1, 1)";
-
-        console.log(window.devicePixelRatio);
 
         // Converting html image display into canvas image
         html2canvas(document.getElementById("polaroid-canvas"), {
@@ -146,6 +151,32 @@ export default class CreatePolaroid extends Component {
         document.getElementById("polaroid-paper").style.transform = "scale(0.8, 0.8)";
     }
 
+    // Converts links to URIs
+    getURI(inputstring) {
+        // If it starts like this don't have to convert link to uri
+        if (inputstring.startsWith("spotify:album:") ||
+            inputstring.startsWith("spotify:track:") ||
+            inputstring.startsWith("spotify:artist:") ||
+            inputstring.startsWith("spotify:playlist:")) {
+            return inputstring;
+        }
+
+        // Validates that it's a link, if not just returns blank string
+        try {
+            new URL(inputstring);
+        } catch (e) {
+            console.log(e);
+            return "";
+        }
+
+        var splitString = inputstring.split("/");
+
+        console.log(splitString);
+
+        return "spotify:" + splitString[3] + ":" + splitString[4];
+    }
+
+    // Handles creation and sending of GET request from server
     handleCreateButtonPressed() {
         const requestOptions = {
             method: 'GET',
@@ -153,7 +184,8 @@ export default class CreatePolaroid extends Component {
 
         var id;
         var type = "blank";
-        var uri = this.state.uri;
+        var uri = this.getURI(this.state.uri);
+        console.log(uri);
 
         // Parsing the resource type and setting the success message
         if (uri.startsWith("spotify:album:")) {
@@ -231,6 +263,7 @@ export default class CreatePolaroid extends Component {
         }
     }
 
+    // Clears polaroid data
     clearPolaroid() {
         // handling invalid uri and clearing all the data in the polaroid
         document.getElementById("polaroid-album-art").setAttribute("src", "");
@@ -400,6 +433,7 @@ export default class CreatePolaroid extends Component {
         document.getElementById("create-page").hidden = true;
     };
 
+    // Attempts to fit tracks into track container
     fitTracks(trackContainer) {
         // Gets the last child to see if it overflows
         var lastChild = trackContainer.lastChild;
@@ -428,6 +462,7 @@ export default class CreatePolaroid extends Component {
         }
     }
 
+    // Shrinks tracks font until reaching minimum font size
     shrinkFont(trackContainer, minFontSize = 0) {
         const lastChild = trackContainer.lastChild;
         const canvas = document.getElementById("polaroid-canvas");
@@ -453,6 +488,7 @@ export default class CreatePolaroid extends Component {
 
     }
 
+    // Flips colors for the generated poster
     handleColorChange(e) {
         switch (e.target.value) {
             case "Inverted":
@@ -541,7 +577,7 @@ export default class CreatePolaroid extends Component {
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <TextField id="standard-basic" label="URI" variant="standard"
+                                <TextField id="standard-basic" label="URL/URI" variant="standard"
                                     onChange={this.handleURIChange} />
                                 <URIHelpDialog />
 
@@ -604,7 +640,6 @@ export default class CreatePolaroid extends Component {
                             </FormControl>
                         </Grid>
 
-
                         <Grid item xs={12} pb={2} align="center">
                             <Button color="success" variant="contained" onClick={this.handleDownload}>
                                 Download!
@@ -616,7 +651,6 @@ export default class CreatePolaroid extends Component {
                             </Button>
                         </Grid>
                     </Paper>
-
 
                     <Paper id="polaroid-paper" m={3} p={3} item component={Grid} hidden={true} style={{
                     }}>

@@ -43,7 +43,7 @@ export default function URIHelpDialog() {
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
-                <DialogTitle id="scroll-dialog-title">What's a URI and how do I get it?</DialogTitle>
+                <DialogTitle id="scroll-dialog-title">What's this about?</DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <DialogContentText
                         id="scroll-dialog-description"
@@ -56,22 +56,19 @@ export default function URIHelpDialog() {
                             <b>Hello!</b>
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            A URI is a <b>Unique Resource Identifier.</b>It can be used to identify a resource on Spotify!
+                            URLs and URIs can be used to identify resources on Spotify!
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
                             This app allows you to use Albums, Tracks, Playlists, and Artists.
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            To get a URI, open Spotify and find your desired resource from the above options.
+                            To get one of these, simply open Spotify and find your desired resource from the above options 
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            Right click on that resource, and move your mouse to the <i>share</i> option.
+                            Press on the three dots, go to share, and press "copy link".
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                            Hold <code>ctrl</code> or <code>alt</code>, and click <b>'Copy Spotify URI'</b>
-                        </Typography>
-                        <Typography variant="body1" component="p" gutterBottom>
-                            Paste it in the text box to create a Polaroid!
+                            Paste it in the text box to create a Poster for that resource!
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
                             Here's a few examples:
