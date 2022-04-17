@@ -5,6 +5,7 @@ body {
     padding: 0;
     margin: auto;
     overflow: auto;
+    overflow-x: hidden;
 }
 
 #main {

@@ -18,7 +18,7 @@ import Poster from "./Poster.js";
 import html2canvas from 'html2canvas';
 
 export default class CreatePoster
- extends Component {
+    extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -55,6 +55,7 @@ export default class CreatePoster
 
         // Utility methods
         this.clearPoster = this.clearPoster.bind(this);
+        this.revealPoster = this.revealPoster.bind(this);
         this.handleDownload = this.handleDownload.bind(this);
         this.getURI = this.getURI.bind(this);
     }
@@ -119,7 +120,7 @@ export default class CreatePoster
     handleURIChange(e) {
         this.setState({
             uri: e.target.value,
-        }, ()=>{
+        }, () => {
             console.log(this.state.uri);
         });
     }
@@ -149,7 +150,7 @@ export default class CreatePoster
             document.body.removeChild(link);
         });
 
-        document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
+        this.revealPoster();
     }
 
     // Converts links to URIs
@@ -233,34 +234,42 @@ export default class CreatePoster
         }
 
         if (type != "blank") {
-            // Execute API calls and handle data
-            fetch("/posterise/?id=" + id + "&type=" + type, requestOptions)
-                .then((response) => response.json())
-                .then((response) => {
-                    // Handle passed or failed responses
-                    console.log(response);
-                    // If the response is valid then paint the image
-                    if (response.status == 200) {
+            try {
+                // Execute API calls and handle data
+                fetch("/posterise/?id=" + id + "&type=" + type, requestOptions)
+                    .then((response) => response.json())
+                    .then((response) => {
+                        // Handle passed or failed responses
+                        console.log(response);
+                        // If the response is valid then paint the image
+                        if (response.status == 200) {
 
-                        document.getElementById("create-page").hidden = true;
-                        document.getElementById("customize-page").hidden = false;
-                        this.setState({
-                            removeRemastered: false,
-                            response: response,
-                        }, () => {
-                            this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
-                        });
+                            document.getElementById("create-page").hidden = true;
+                            document.getElementById("customize-page").hidden = false;
+                            this.setState({
+                                removeRemastered: false,
+                                response: response,
+                            }, () => {
+                                this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
+                            });
 
-                    } else {
-                        // handling invalid uri and clearing all the data in the poster if fetch failed
-                        this.clearPoster();
-                        this.setState({
-                            successMsg: "",
-                            errorMsg: "Error: " + response.errorMsg,
-                        });
+                        } else {
+                            // handling invalid uri and clearing all the data in the poster if fetch failed
+                            this.clearPoster();
+                            this.setState({
+                                successMsg: "",
+                                errorMsg: "Error: " + response.errorMsg,
+                            });
 
-                    }
+                        }
+                    });
+            } catch (e) {
+                this.clearPoster();
+                this.setState({
+                    successMsg: "",
+                    errorMsg: "Error: No response! Try again.",
                 });
+            }
         }
     }
 
@@ -329,8 +338,7 @@ export default class CreatePoster
                 this.handleArtistName();
 
                 // Reveal the document
-                document.getElementById("poster-paper").hidden = false;
-                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
+                this.revealPoster();
 
                 // The tracks in the album
                 const albumTracks = response.tracks.items;
@@ -384,8 +392,7 @@ export default class CreatePoster
                 this.handleArtistName();
 
                 // Revealing the poster
-                document.getElementById("poster-paper").hidden = false;
-                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
+                this.revealPoster();
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -401,8 +408,7 @@ export default class CreatePoster
                 document.getElementById("poster-resource-year").innerHTML = "";
 
                 // Revealing the poster
-                document.getElementById("poster-paper").hidden = false;
-                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
+                this.revealPoster();
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -422,8 +428,7 @@ export default class CreatePoster
                 document.getElementById("poster-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
 
                 // Revealing the poster
-                document.getElementById("poster-paper").hidden = false;
-                document.getElementById("poster-paper").style.transform = "scale(0.8, 0.8)";
+                this.revealPoster();
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -514,9 +519,43 @@ export default class CreatePoster
         return parentRect.bottom - border < childRect.bottom;
     }
 
+    revealPoster(scale = 0.8) {
+        const posterPaper = document.getElementById("poster-paper");
+        posterPaper.hidden = false;
+        const userWidth = window.screen.width;
+
+        posterPaper.style.transform = "scale(" + 1 + ")";
+
+        if (userWidth - 48 < posterPaper.getBoundingClientRect().width) {
+            scale = (userWidth - 48) / posterPaper.getBoundingClientRect().width;
+        } else {
+            scale = 0.8
+        }
+
+        posterPaper.style.transform = "scale(" + scale + ")";
+
+        const customizePaper = document.getElementById("customize-page");
+
+        console.log(posterPaper.getBoundingClientRect().top);
+        console.log(customizePaper.getBoundingClientRect().bottom);
+        if (
+            posterPaper.getBoundingClientRect().top > customizePaper.getBoundingClientRect().bottom &&
+            !document.body.contains(document.getElementById("scroll-heading"))
+        ) {
+            // Insert heading saying to scroll for preview if screen is small
+            var scrollHeading = document.createElement("h2");
+            var scrollText = document.createTextNode("Scroll for preview!");
+            scrollHeading.id = "scroll-heading";
+            scrollHeading.style.cssText = "flex-basis: 100%; text-align: center; margin-bottom:0;";
+            scrollHeading.appendChild(scrollText);
+
+            posterPaper.parentNode.insertBefore(scrollHeading, posterPaper);
+        }
+    }
+
     render() {
         return (
-            <Grid container spacing={1}>
+            <Grid container rowSpacing={1} >
                 <Grid item xs={12} align="center">
                     <Collapse
                         in={this.state.errorMsg != ""}
@@ -549,6 +588,7 @@ export default class CreatePoster
                 </Grid>
 
                 <Grid
+                    pt={7}
                     container
                     spacing={0}
                     direction="row"
@@ -649,7 +689,7 @@ export default class CreatePoster
                         </Grid>
                     </Paper>
 
-                    <Paper id="poster-paper" m={3} p={3} item component={Grid} hidden={true} style={{
+                    <Paper id="poster-paper" mt={-16} p={3} item component={Grid} hidden={true} style={{
                     }}>
                         <Poster />
                     </Paper>
