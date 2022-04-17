@@ -18,7 +18,7 @@ export default function Polaroid() {
                     wordWrap: "break-word",
                 }}>
                 <p style={{
-                    fontFamily: "Oswald", color: "#2c2b29", fontSize: "38px",
+                    fontFamily: "Oswald", color: "#2c2b29", fontSize: "38px", fontWeight: 400,
                     marginLeft: 0, marginTop: 0, lineHeight: "90%",
                 }}
                     id="polaroid-resource-title"
@@ -35,7 +35,6 @@ export default function Polaroid() {
                     fontFamily: "Oswald", color: "#2c2b29", fontSize: "24px", fontWeight: 400,
                     marginLeft: 0, marginTop: -20, lineHeight: "90%",
                 }}>
-
                 </div>
             </div>
         </div>

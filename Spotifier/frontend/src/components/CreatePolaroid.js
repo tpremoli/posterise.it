@@ -32,7 +32,6 @@ export default class CreatePolaroid extends Component {
         }
         // Parameter methods
         this.handleURIChange = this.handleURIChange.bind(this);
-        this.handleArtistChange = this.handleArtistChange.bind(this);
         this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleReturnPressed = this.handleReturnPressed.bind(this);
 
@@ -47,6 +46,7 @@ export default class CreatePolaroid extends Component {
         // Customization methods
         this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
         this.handleColorChange = this.handleColorChange.bind(this);
+        this.handleArtistChange = this.handleArtistChange.bind(this);
 
         // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
@@ -59,6 +59,8 @@ export default class CreatePolaroid extends Component {
     handleArtistChange(e) {
         this.setState({
             includeArtist: e.target.checked,
+        }, () => {
+            this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
         });
     }
 
@@ -72,8 +74,6 @@ export default class CreatePolaroid extends Component {
         this.setState({
             removeRemastered: e.target.checked,
         }, () => {
-            console.log(this.state.removeRemastered);
-            console.log(this.state.response);
             this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
         });
     }
@@ -141,6 +141,7 @@ export default class CreatePolaroid extends Component {
                 successMsg: "",
                 errorMsg: "Invalid URI!",
             });
+            return;
         }
 
         if (type != "blank") {
@@ -159,8 +160,9 @@ export default class CreatePolaroid extends Component {
                             removeRemastered: false,
                             response: response,
                         }, () => {
-                            this.paintImg((JSON.parse(JSON.stringify(response))));
+                            this.paintImg(JSON.parse(JSON.stringify(this.state.response)));
                         });
+
                     } else {
                         // handling invalid uri and clearing all the data in the polaroid if fetch failed
                         this.clearPolaroid();
@@ -370,7 +372,7 @@ export default class CreatePolaroid extends Component {
         var squashTo = trackContainer.firstChild;
 
         // While the tracks are overflowing and we haven't squashed everything yet this squashes.
-        while (this.isOutsideContainer(canvas, lastChild) && squashTo != lastChild) {
+        while (this.isOutsideContainer(canvas, lastChild) && squashTo != lastChild && squashTo != null) {
             // Sets the squashto innerhtml to include the next track's name
             squashTo.innerHTML = squashTo.innerHTML.trim() + " / " + squashTo.nextSibling.innerHTML;
 
@@ -387,7 +389,7 @@ export default class CreatePolaroid extends Component {
     }
 
     shrinkFont(trackContainer, minFontSize = 0) {
-        var lastChild = trackContainer.lastChild;
+        const lastChild = trackContainer.lastChild;
         const canvas = document.getElementById("polaroid-canvas");
         var fontSize = parseFloat(window.getComputedStyle(trackContainer, null).getPropertyValue('font-size'));
 
@@ -406,7 +408,9 @@ export default class CreatePolaroid extends Component {
                 var marginTop = parseFloat(window.getComputedStyle(trackline, null).getPropertyValue('margin-top'));
                 trackline.style.marginTop = (marginTop + 1) + 'px';
             }
+
         }
+        
     }
 
     handleColorChange(e) {
@@ -481,14 +485,22 @@ export default class CreatePolaroid extends Component {
                             <Typography component="h4" variant="h4">
                                 Create A Polaroid!
                             </Typography>
+                            <p style={{
+                                fontFamily: "Oswald", color: "#f7f2eb", fontSize: "1px", fontWeight: 400,
+                            }}
+                            >
+                                Placeholder to load font
+                            </p>
+                            <p style={{
+                                fontFamily: "Oswald", color: "#f7f2eb", fontSize: "1px", fontWeight: 200,
+                            }}
+                            >
+                                Placeholder to load font
+                            </p>
                         </Grid>
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
-                                    <FormControlLabel disabled control={<Checkbox defaultChecked />} label="Include Artist"
-                                        onChange={this.handleArtistChange} />
-                                </Tooltip>
                                 <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="right">
                                     <FormControlLabel disabled control={<Checkbox />} label="Include Length"
                                         onChange={this.handleLengthChange} />
@@ -537,9 +549,10 @@ export default class CreatePolaroid extends Component {
                                     </Tooltip>
                                 </RadioGroup>
 
-                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="left">
-                                    <FormControlLabel disabled control={<Switch />} label="Include Artist"
-                                    />
+
+                                <Tooltip title="Include the artist's name in the polaroid design!" arrow placement="right">
+                                    <FormControlLabel control={<Switch />} label="Include Artist"
+                                        onChange={this.handleArtistChange} />
                                 </Tooltip>
 
                                 <Tooltip title="Include the length of the album/track/playlist in the polaroid design!" arrow placement="left">
@@ -550,9 +563,9 @@ export default class CreatePolaroid extends Component {
                                     <FormControlLabel disabled control={<Switch />} label="One track per line" />
                                 </Tooltip>
 
-                                <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left"
-                                    onChange={this.handleRemasteredChange} >
-                                    <FormControlLabel checked={this.state.removeRemastered} control={<Switch />} label="Remove Remastered Tags" />
+                                <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left">
+                                    <FormControlLabel control={<Switch />} label="Remove Remastered Tags"
+                                        checked={this.state.removeRemastered} onChange={this.handleRemasteredChange} />
                                 </Tooltip>
 
 
