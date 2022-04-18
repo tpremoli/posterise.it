@@ -26,7 +26,6 @@ export default class CreatePoster
             errorMsg: "",
             successMsg: "",
             includeArtist: false,
-            includeLength: false,
             removeRemastered: false,
             response: null,
 
@@ -36,10 +35,10 @@ export default class CreatePoster
             disallowCode: false,
 
             flavorLabel: "Flavor text",
+            artistLabel: "Include Artist"
         }
         // Parameter methods
         this.handleURIChange = this.handleURIChange.bind(this);
-        this.handleLengthChange = this.handleLengthChange.bind(this);
         this.handleReturnPressed = this.handleReturnPressed.bind(this);
         this.handleArtistName = this.handleArtistName.bind(this);
 
@@ -55,6 +54,7 @@ export default class CreatePoster
         this.handleColorChange = this.handleColorChange.bind(this);
         this.handleArtistChange = this.handleArtistChange.bind(this);
         this.handleFlavorTextChange = this.handleFlavorTextChange.bind(this);
+        this.handleFlavorTextRender = this.handleFlavorTextRender.bind(this);
 
         // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
@@ -108,12 +108,6 @@ export default class CreatePoster
             else
                 resourceloc.innerHTML = this.state.response.album.release_date.split('-')[0];
         }
-    }
-
-    handleLengthChange(e) {
-        this.setState({
-            includeLength: e.target.checked,
-        });
     }
 
     handleRemasteredChange(e) {
@@ -392,12 +386,12 @@ export default class CreatePoster
                 // Setting year resource text
                 this.handleArtistName();
 
-                // Revealing the poster
-                this.revealPoster("track");
-
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
+
+                // Revealing the poster
+                this.revealPoster("track");
 
                 break;
 
@@ -408,12 +402,12 @@ export default class CreatePoster
                 // Clearing year resource
                 document.getElementById("poster-resource-year").innerHTML = "";
 
-                // Revealing the poster
-                this.revealPoster("artist");
-
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
+
+                // Revealing the poster
+                this.revealPoster("artist");
 
                 break;
 
@@ -428,12 +422,12 @@ export default class CreatePoster
                 // Setting year resource text
                 document.getElementById("poster-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
 
-                // Revealing the poster
-                this.revealPoster("playlist");
-
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
                 trackContainer.innerHTML = "";
+
+                // Revealing the poster
+                this.revealPoster("playlist");
 
                 break;
         }
@@ -482,7 +476,7 @@ export default class CreatePoster
             fontSize--;
 
             // Gets all the children
-            var tracklines = document.getElementsByClassName('track-line');
+            var tracklines = trackContainer.children;
 
             // Sets the children's margin to be a lil bigger after shrinking (looks better)
             for (var i = 0; i < tracklines.length; i++) {
@@ -513,16 +507,31 @@ export default class CreatePoster
     }
 
     handleFlavorTextChange(e) {
+        // shouldn't work for albums
         if (this.state.response.type != "album") {
-            document.getElementById("poster-resource-tracks").innerHTML = "";
-            var flavorElem = document.createElement("flavor-text");
-            var flavorText = document.createTextNode(e.target.value);
-            flavorElem.id = "flavor-text";
-            flavorElem.style.cssText = "flex-basis: 100%; text-align: center; margin-bottom:0;";
-            flavorElem.appendChild(flavorText);
-            document.getElementById("poster-resource-tracks").appendChild(flavorElem);
+            this.handleFlavorTextRender(e.target.value);
         }
     }
+
+    handleFlavorTextRender(inputText) {
+        // Resetting content
+        document.getElementById("poster-resource-tracks").innerHTML = "";
+        document.getElementById("poster-resource-tracks").style.fontSize = '24px';
+
+        // Similar to track rendering, but with newlines instead
+        var lines = inputText.split("\n");
+        lines.forEach((line) => {
+            var flavorElem = document.createElement("p");
+            var flavorText = document.createTextNode(line);
+            flavorElem.style.cssText = "flex-basis: 100%; text-align: center; margin-top: -20px;";
+            flavorElem.appendChild(flavorText);
+            document.getElementById("poster-resource-tracks").appendChild(flavorElem);
+
+            // Shrinks font just like for tracks
+            this.shrinkFont(document.getElementById("poster-resource-tracks"));
+        });
+    }
+
 
     // Checks if childDiv is outside the container
     isOutsideContainer(parentDiv, childDiv, border = 20) {
@@ -570,10 +579,49 @@ export default class CreatePoster
                     disallowNameAdd: false,
                     disallowRRemoval: false,
                     disallowFlavor: true,
-                    disallowCode: false,
-                    flavorLabel: "Flavor text not supported for albums."
-                });
+                    disallowCode: true,
 
+                    flavorLabel: "Flavor text not supported for albums.",
+                    artistLabel: "Include artist",
+                });
+                break;
+            case "track":
+                this.setState({
+                    disallowNameAdd: false,
+                    disallowRRemoval: false,
+                    disallowFlavor: false,
+                    disallowCode: false,
+
+                    flavorLabel: "Flavor text",
+                    artistLabel: "Include artist",
+                });
+                this.handleFlavorTextRender(document.getElementById("flavor-text").value);
+                break;
+            case "artist":
+                this.setState({
+                    disallowNameAdd: true,
+                    disallowRRemoval: true,
+                    disallowFlavor: false,
+                    disallowCode: false,
+
+                    flavorLabel: "Flavor text",
+                    artistLabel: "Include artist",
+                    
+                });
+                this.handleFlavorTextRender(document.getElementById("flavor-text").value);
+                break;
+            case "playlist":
+                this.setState({
+                    disallowNameAdd: true,
+                    disallowRRemoval: false,
+                    disallowFlavor: false,
+                    disallowCode: false,
+
+                    flavorLabel: "Flavor text",
+                    artistLabel: "Include creator",
+                });
+                this.handleFlavorTextRender(document.getElementById("flavor-text").value);
+                break;
         }
     }
 
@@ -688,8 +736,8 @@ export default class CreatePoster
 
 
                                 <Tooltip title="Include the artist's name in the poster design!" arrow placement="left">
-                                    <FormControlLabel id="include-artist" control={<Switch />} label="Include Artist"
-                                        disabled={this.state.disallowNameAdd} onChange={this.handleArtistChange} />
+                                    <FormControlLabel id="include-artist" control={<Switch />} label={this.state.artistLabel}
+                                        disabled={this.state.disallowNameAdd} checked={this.state.includeArtist} onChange={this.handleArtistChange} />
                                 </Tooltip>
 
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left">
@@ -697,9 +745,8 @@ export default class CreatePoster
                                         disabled={this.state.disallowRRemoval} checked={this.state.removeRemastered} onChange={this.handleRemasteredChange} />
                                 </Tooltip>
 
-                                <TextField disabled={this.state.disallowFlavor} id="flavor-text" label={this.state.flavorLabel} variant="standard"
+                                <TextField multiline disabled={this.state.disallowFlavor} id="flavor-text" label={this.state.flavorLabel} variant="standard"
                                     onChange={this.handleFlavorTextChange} />
-
 
                             </FormControl>
                         </Grid>
