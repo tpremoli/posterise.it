@@ -648,7 +648,7 @@ export default class CreatePoster extends Component {
             scrollHeading.style.cssText = "flex-basis: 100%; text-align: center; margin-bottom:0;";
             scrollHeading.appendChild(scrollText);
 
-            posterPaper.parentNode.insertBefore(scrollHeading, posterPaper);
+            posterPaper.parentNode.insertBefore(scrollHeading, posterPaper.previousSibling);
         }
         switch (type) {
             case "album":
