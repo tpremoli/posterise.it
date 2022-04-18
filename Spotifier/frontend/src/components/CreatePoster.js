@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import Checkbox from '@mui/material/Checkbox';
 import Tooltip from '@mui/material/Tooltip';
 import { Collapse, Paper, RadioGroup } from "@mui/material";
 import Switch from '@mui/material/Switch';
@@ -30,6 +29,13 @@ export default class CreatePoster
             includeLength: false,
             removeRemastered: false,
             response: null,
+
+            disallowNameAdd: false,
+            disallowRRemoval: false,
+            disallowFlavor: false,
+            disallowCode: false,
+
+            flavorLabel: "Flavor text",
         }
         // Parameter methods
         this.handleURIChange = this.handleURIChange.bind(this);
@@ -48,6 +54,7 @@ export default class CreatePoster
         this.handleRemasteredChange = this.handleRemasteredChange.bind(this);
         this.handleColorChange = this.handleColorChange.bind(this);
         this.handleArtistChange = this.handleArtistChange.bind(this);
+        this.handleFlavorTextChange = this.handleFlavorTextChange.bind(this);
 
         // Authentication methods
         this.authenticateSpotify = this.authenticateSpotify.bind(this);
@@ -121,7 +128,7 @@ export default class CreatePoster
         this.setState({
             uri: e.target.value,
         }, () => {
-            console.log(this.state.uri);
+            // console.log(this.state.uri);
         });
     }
 
@@ -150,7 +157,7 @@ export default class CreatePoster
             document.body.removeChild(link);
         });
 
-        this.revealPoster();
+        this.revealPoster(this.state.response.type);
     }
 
     // Converts links to URIs
@@ -167,13 +174,10 @@ export default class CreatePoster
         try {
             new URL(inputstring);
         } catch (e) {
-            console.log(e);
             return "";
         }
 
         var splitString = inputstring.split("/");
-
-        console.log(splitString);
 
         return "spotify:" + splitString[3] + ":" + splitString[4];
     }
@@ -187,7 +191,6 @@ export default class CreatePoster
         var id;
         var type = "blank";
         var uri = this.getURI(this.state.uri);
-        console.log(uri);
 
         // Parsing the resource type and setting the success message
         if (uri.startsWith("spotify:album:")) {
@@ -244,8 +247,6 @@ export default class CreatePoster
                         // If the response is valid then paint the image
                         if (response.status == 200) {
 
-                            document.getElementById("create-page").hidden = true;
-                            document.getElementById("customize-page").hidden = false;
                             this.setState({
                                 removeRemastered: false,
                                 response: response,
@@ -338,7 +339,7 @@ export default class CreatePoster
                 this.handleArtistName();
 
                 // Reveal the document
-                this.revealPoster();
+                this.revealPoster("album");
 
                 // The tracks in the album
                 const albumTracks = response.tracks.items;
@@ -392,7 +393,7 @@ export default class CreatePoster
                 this.handleArtistName();
 
                 // Revealing the poster
-                this.revealPoster();
+                this.revealPoster("track");
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -408,7 +409,7 @@ export default class CreatePoster
                 document.getElementById("poster-resource-year").innerHTML = "";
 
                 // Revealing the poster
-                this.revealPoster();
+                this.revealPoster("artist");
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -428,7 +429,7 @@ export default class CreatePoster
                 document.getElementById("poster-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
 
                 // Revealing the poster
-                this.revealPoster();
+                this.revealPoster("playlist");
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -511,6 +512,18 @@ export default class CreatePoster
         }
     }
 
+    handleFlavorTextChange(e) {
+        if (this.state.response.type != "album") {
+            document.getElementById("poster-resource-tracks").innerHTML = "";
+            var flavorElem = document.createElement("flavor-text");
+            var flavorText = document.createTextNode(e.target.value);
+            flavorElem.id = "flavor-text";
+            flavorElem.style.cssText = "flex-basis: 100%; text-align: center; margin-bottom:0;";
+            flavorElem.appendChild(flavorText);
+            document.getElementById("poster-resource-tracks").appendChild(flavorElem);
+        }
+    }
+
     // Checks if childDiv is outside the container
     isOutsideContainer(parentDiv, childDiv, border = 20) {
         const parentRect = parentDiv.getBoundingClientRect();
@@ -519,7 +532,11 @@ export default class CreatePoster
         return parentRect.bottom - border < childRect.bottom;
     }
 
-    revealPoster(scale = 0.8) {
+    revealPoster(type, scale = 0.8) {
+        document.getElementById("create-page").hidden = true;
+        const customizePaper = document.getElementById("customize-page");
+        customizePaper.hidden = false;
+
         const posterPaper = document.getElementById("poster-paper");
         posterPaper.hidden = false;
         const userWidth = window.screen.width;
@@ -534,10 +551,6 @@ export default class CreatePoster
 
         posterPaper.style.transform = "scale(" + scale + ")";
 
-        const customizePaper = document.getElementById("customize-page");
-
-        console.log(posterPaper.getBoundingClientRect().top);
-        console.log(customizePaper.getBoundingClientRect().bottom);
         if (
             posterPaper.getBoundingClientRect().top > customizePaper.getBoundingClientRect().bottom &&
             !document.body.contains(document.getElementById("scroll-heading"))
@@ -550,6 +563,17 @@ export default class CreatePoster
             scrollHeading.appendChild(scrollText);
 
             posterPaper.parentNode.insertBefore(scrollHeading, posterPaper);
+        }
+        switch (type) {
+            case "album":
+                this.setState({
+                    disallowNameAdd: false,
+                    disallowRRemoval: false,
+                    disallowFlavor: true,
+                    disallowCode: false,
+                    flavorLabel: "Flavor text not supported for albums."
+                });
+
         }
     }
 
@@ -664,20 +688,23 @@ export default class CreatePoster
 
 
                                 <Tooltip title="Include the artist's name in the poster design!" arrow placement="left">
-                                    <FormControlLabel control={<Switch />} label="Include Artist"
-                                        onChange={this.handleArtistChange} />
+                                    <FormControlLabel id="include-artist" control={<Switch />} label="Include Artist"
+                                        disabled={this.state.disallowNameAdd} onChange={this.handleArtistChange} />
                                 </Tooltip>
 
                                 <Tooltip title="Remove (Remastered) from track/album names!" arrow placement="left">
-                                    <FormControlLabel control={<Switch />} label="Remove Remastered Tags"
-                                        checked={this.state.removeRemastered} onChange={this.handleRemasteredChange} />
+                                    <FormControlLabel id="remove-remastered" control={<Switch />} label="Remove Remastered Tags"
+                                        disabled={this.state.disallowRRemoval} checked={this.state.removeRemastered} onChange={this.handleRemasteredChange} />
                                 </Tooltip>
+
+                                <TextField disabled={this.state.disallowFlavor} id="flavor-text" label={this.state.flavorLabel} variant="standard"
+                                    onChange={this.handleFlavorTextChange} />
 
 
                             </FormControl>
                         </Grid>
 
-                        <Grid item xs={12} pb={2} align="center">
+                        <Grid item xs={12} mt={1} pb={2} align="center">
                             <Button color="success" variant="contained" onClick={this.handleDownload}>
                                 Download!
                             </Button>
