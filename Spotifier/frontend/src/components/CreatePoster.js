@@ -73,19 +73,29 @@ export default class CreatePoster
         }, () => {
             var resourceloc = document.getElementById("poster-resource-year");
             if (this.state.includeArtist) {
-                if (this.state.response.type == "album" || this.state.response.type == "track") {
-                    resourceloc.innerHTML = this.state.response.artists[0].name;
-                    if (this.state.response.type == "album")
+                if (this.state.response.type != "artist") {
+                    if (this.state.response.type == "album") {
+                        resourceloc.innerHTML = this.state.response.artists[0].name;
                         resourceloc.innerHTML += " - " + this.state.response.release_date.split('-')[0];
-                    else
+                    }
+                    else if (this.state.response.type == "track") {
+                        resourceloc.innerHTML = this.state.response.artists[0].name;
                         resourceloc.innerHTML += " - " + this.state.response.album.release_date.split('-')[0];
+                    } else {
+                        resourceloc.innerHTML = this.state.response.owner.display_name;
+                        resourceloc.innerHTML += " - " + this.state.response.description;
+                    }
                 }
             } else {
-                if (this.state.response.type == "album" || this.state.response.type == "track") {
-                    if (this.state.response.type == "album")
+                if (this.state.response.type != "artist") {
+                    if (this.state.response.type == "album") {
                         resourceloc.innerHTML = this.state.response.release_date.split('-')[0];
-                    else
+                    }
+                    else if (this.state.response.type == "track") {
                         resourceloc.innerHTML = this.state.response.album.release_date.split('-')[0];
+                    } else {
+                        resourceloc.innerHTML = this.state.response.description;
+                    }
                 }
             }
         });
@@ -96,18 +106,33 @@ export default class CreatePoster
     handleArtistName() {
         var resourceloc = document.getElementById("poster-resource-year");
         if (this.state.includeArtist) {
-            resourceloc.innerHTML = this.state.response.artists[0].name;
-            if (this.state.response.type == "album")
-                resourceloc.innerHTML += " - " + this.state.response.release_date.split('-')[0];
-            else
-                resourceloc.innerHTML += " - " + this.state.response.album.release_date.split('-')[0];
+            if (this.state.response.type != "artist") {
+                if (this.state.response.type == "album") {
+                    resourceloc.innerHTML = this.state.response.artists[0].name;
+                    resourceloc.innerHTML += " - " + this.state.response.release_date.split('-')[0];
+                }
+                else if (this.state.response.type == "track") {
+                    resourceloc.innerHTML = this.state.response.artists[0].name;
+                    resourceloc.innerHTML += " - " + this.state.response.album.release_date.split('-')[0];
+                } else {
+                    resourceloc.innerHTML = this.state.response.owner.display_name;
+                    resourceloc.innerHTML += " - " + this.state.response.description;
+                }
+            }
         } else {
-            if (this.state.response.type == "album")
-                resourceloc.innerHTML = this.state.response.release_date.split('-')[0];
-            else
-                resourceloc.innerHTML = this.state.response.album.release_date.split('-')[0];
+            if (this.state.response.type != "artist") {
+                if (this.state.response.type == "album") {
+                    resourceloc.innerHTML = this.state.response.release_date.split('-')[0];
+                }
+                else if (this.state.response.type == "track") {
+                    resourceloc.innerHTML = this.state.response.album.release_date.split('-')[0];
+                } else {
+                    resourceloc.innerHTML = this.state.response.description;
+                }
+            }
         }
     }
+
 
     handleRemasteredChange(e) {
         this.setState({
@@ -241,6 +266,7 @@ export default class CreatePoster
                         if (response.status == 200) {
 
                             this.setState({
+                                includeArtist: false,
                                 removeRemastered: false,
                                 response: response,
                             }, () => {
@@ -424,7 +450,7 @@ export default class CreatePoster
                 document.getElementById("poster-resource-year").style.fontWeight = 200;
 
                 // Setting year resource text
-                document.getElementById("poster-resource-year").innerHTML = response.description;
+                this.handleArtistName();
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -662,7 +688,7 @@ export default class CreatePoster
                 break;
             case "playlist":
                 this.setState({
-                    disallowNameAdd: true,
+                    disallowNameAdd: false,
                     disallowRRemoval: false,
                     disallowFlavor: true,
 
