@@ -16,8 +16,7 @@ import URIHelpDialog from "./URIHelpDialog.js";
 import Poster from "./Poster.js";
 import html2canvas from 'html2canvas';
 
-export default class CreatePoster
-    extends Component {
+export default class CreatePoster extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -610,7 +609,6 @@ export default class CreatePoster
             this.shrinkFont(document.getElementById("poster-resource-tracks"));
         });
     }
-
 
     // Checks if childDiv is outside the container
     isOutsideContainer(parentDiv, childDiv, border = 20) {

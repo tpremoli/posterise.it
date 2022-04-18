@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import AboutPage from "./AboutPage";
 import CreatePoster from "./CreatePoster";
+import Home from "./Home";
 import {
     BrowserRouter as Router,
     Routes,
@@ -9,7 +10,7 @@ import {
     Redirect,
 } from "react-router-dom";
 
-export default class HomePage extends Component {
+export default class RouterPage extends Component {
     constructor(props) {
         super(props);
     }
@@ -18,16 +19,11 @@ export default class HomePage extends Component {
         return (
             <Router>
                 <Routes>
-                    <Route exact path="/" element={
-                        <p>
-                            This is the home page
-                        </p>
-                    } >
-                    </Route>
+                    <Route exact path="/" element={<Home />} />
                     <Route path="/about" element={<AboutPage />} />
                     <Route path="/create-poster" element={<CreatePoster />} />
                 </Routes>
-            </Router>
+            </Router >
         );
     }
 }

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { createRoot } from 'react-dom/client';
-import HomePage from "./HomePage";
+import RouterPage from "./RouterPage.js";
 import { CssBaseline } from "@mui/material";
 
 export default class App extends Component {
@@ -13,7 +13,7 @@ export default class App extends Component {
         return (
             <ThemeProvider theme={theme}>
                 <CssBaseline>
-                    <HomePage />
+                    <RouterPage />
                 </CssBaseline>
             </ThemeProvider>
         );
