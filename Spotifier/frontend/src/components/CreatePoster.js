@@ -32,7 +32,6 @@ export default class CreatePoster
             disallowNameAdd: false,
             disallowRRemoval: false,
             disallowFlavor: false,
-            disallowCode: false,
 
             flavorLabel: "Flavor text",
             artistLabel: "Include Artist"
@@ -299,13 +298,18 @@ export default class CreatePoster
     // This function is responsible for rendering the html elements in the poster
     paintImg(response) {
         // This checks if to remove remastered tags
-        if (this.state.removeRemastered) {
+        if (this.state.removeRemastered && (response.type == "album" || response.type == "track")) {
             // Clearing title section
             const titleSection = document.getElementById("poster-resource-title");
             titleSection.innerHTML = "";
 
+            var splitName = [""];
             // Splitting it by ( and adding first element generally removes remastered sign
-            const splitName = response.name.split('(');
+            if (response.type == "album") {
+                splitName = response.name.split('(');
+            } else {
+                splitName = response.name.split('-');
+            }
 
             titleSection.innerHTML += splitName[0]
 
@@ -416,11 +420,11 @@ export default class CreatePoster
                 document.getElementById("poster-album-art").setAttribute("src", response.images[0].url);
 
                 // Resetting year resource styling
-                document.getElementById("poster-resource-year").style.fontStyle = "italic";
-                document.getElementById("poster-resource-year").style.fontWeight = 300;
+                document.getElementById("poster-resource-year").style.fontStyle = "normal";
+                document.getElementById("poster-resource-year").style.fontWeight = 200;
 
                 // Setting year resource text
-                document.getElementById("poster-resource-year").innerHTML = "A playlist by " + response.owner.display_name;
+                document.getElementById("poster-resource-year").innerHTML = response.description;
 
                 // Clearing the tracklist. Should have other data here
                 var trackContainer = document.getElementById("poster-resource-tracks");
@@ -428,6 +432,55 @@ export default class CreatePoster
 
                 // Revealing the poster
                 this.revealPoster("playlist");
+
+                // The tracks in the album
+                const playlistTracks = response.tracks.items;
+
+                // The container for track elements
+                var trackContainer = document.getElementById("poster-resource-tracks");
+                trackContainer.innerHTML = "";
+
+                // Creates track elements in the countainer for each track in the album
+                for (var i = 0; i <= 10 && i < playlistTracks.length; i++) {
+                    var track = playlistTracks[i].track;
+                    if (this.state.removeRemastered) {
+                        // Getting name and resetting it
+                        var trackname = track.name;
+                        track.name = "";
+
+                        // Splitting it by ( and adding first element generally removes remastered sign
+                        const splitName = trackname.split('-');
+
+                        track.name += splitName[0]
+
+                        // This will account for cases where there's more than one () in album title
+                        for (var j = 1; j < splitName.length - 1; j++) {
+                            track.name += "-" + splitName[i];
+                        }
+                    }
+
+                    // Creating p element with necessary styling and classes.
+                    var trackline = document.createElement("p");
+                    var trackname = document.createTextNode(track.name);
+                    trackline.appendChild(trackname);
+                    trackline.style.cssText = "margin-top: -20px;";
+                    trackline.className += "track-line";
+
+                    trackContainer.appendChild(trackline);
+                }
+
+                // Creating p element with necessary styling and classes.
+                var trackline = document.createElement("p");
+                var trackname = document.createTextNode("...and more!");
+                trackline.appendChild(trackname);
+                trackline.style.cssText = "margin-top: -20px; font-style: italic";
+                trackline.className += "track-line";
+
+
+                trackContainer.appendChild(trackline);
+
+                // Make sure that all the tracks fit the container and fix it.
+                this.fitTracks(trackContainer);
 
                 break;
         }
@@ -579,7 +632,6 @@ export default class CreatePoster
                     disallowNameAdd: false,
                     disallowRRemoval: false,
                     disallowFlavor: true,
-                    disallowCode: true,
 
                     flavorLabel: "Flavor text not supported for albums.",
                     artistLabel: "Include artist",
@@ -590,7 +642,6 @@ export default class CreatePoster
                     disallowNameAdd: false,
                     disallowRRemoval: false,
                     disallowFlavor: false,
-                    disallowCode: false,
 
                     flavorLabel: "Flavor text",
                     artistLabel: "Include artist",
@@ -602,11 +653,10 @@ export default class CreatePoster
                     disallowNameAdd: true,
                     disallowRRemoval: true,
                     disallowFlavor: false,
-                    disallowCode: false,
 
                     flavorLabel: "Flavor text",
                     artistLabel: "Include artist",
-                    
+
                 });
                 this.handleFlavorTextRender(document.getElementById("flavor-text").value);
                 break;
@@ -614,13 +664,12 @@ export default class CreatePoster
                 this.setState({
                     disallowNameAdd: true,
                     disallowRRemoval: false,
-                    disallowFlavor: false,
-                    disallowCode: false,
+                    disallowFlavor: true,
 
-                    flavorLabel: "Flavor text",
+                    flavorLabel: "Flavor text not supported for playlists.",
                     artistLabel: "Include creator",
                 });
-                this.handleFlavorTextRender(document.getElementById("flavor-text").value);
+                // this.handleFlavorTextRender(document.getElementById("flavor-text").value);
                 break;
         }
     }
