@@ -830,7 +830,7 @@ export default class CreatePoster extends Component {
                             </Button>
                         </Grid>
                         <Grid item xs={12} pb={6} align="center">
-                            <Button color="secondary" variant="outlined" to="/" onClick={this.handleReturnPressed}>
+                            <Button color="secondary" variant="outlined" onClick={this.handleReturnPressed}>
                                 Return
                             </Button>
                         </Grid>
