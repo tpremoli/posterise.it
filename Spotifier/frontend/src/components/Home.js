@@ -52,7 +52,7 @@ export default class Home extends Component {
                             </Button>
                         </Grid>
                         <Grid item xs={12} p={1} align="center">
-                            <Button color="primary" variant="outlined" to="/about" component={Link}>
+                            <Button color="primary" variant="outlined" to="/examples" component={Link}>
                                 View Examples
                             </Button>
                         </Grid>

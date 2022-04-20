@@ -8,6 +8,7 @@ export default function Poster() {
         }} >
             <img style={{
                 width: 430, height: 430, marginTop: 30, marginRight: 35, marginLeft: 35, marginBottom: 0,
+                objectFit: "cover",
             }}
                 id="poster-album-art"
             ></img>

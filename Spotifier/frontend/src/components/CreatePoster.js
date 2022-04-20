@@ -770,7 +770,7 @@ export default class CreatePoster extends Component {
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <TextField id="standard-basic" label="Song Link" variant="standard"
+                                <TextField id="standard-basic" label="Spotify link" variant="standard"
                                     onChange={this.handleURIChange} />
                                 <URIHelpDialog />
 

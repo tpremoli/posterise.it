@@ -5,6 +5,6 @@ app_name = 'frontend'
 
 urlpatterns = [
     path('', index), 
-    path('about', index),
+    path('examples', index),
     path('create-poster', index),
 ]

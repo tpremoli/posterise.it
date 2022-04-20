@@ -1,5 +1,8 @@
 Run these scripts in command line to run the test server
 
+Ensure development --watch is enabled in package.json
+Ensure that the right address is being accessed in fetch situations
+
 -- CMD 1: --
 cd spotifier
 python manage.py runserver
