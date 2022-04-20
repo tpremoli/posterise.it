@@ -4,10 +4,10 @@ export default function Poster() {
 
     return (
         <div id="poster-canvas" style={{
-            backgroundColor: "#dcd9d2", width: 500, height: 800, margin: 0,
+            backgroundColor: "#dcd9d2", width: 500, height: 750, margin: 0,
         }} >
             <img style={{
-                width: 430, height: 435, marginTop: 30, marginRight: 35, marginLeft: 35, marginBottom: 0,
+                width: 430, height: 430, marginTop: 30, marginRight: 35, marginLeft: 35, marginBottom: 0,
             }}
                 id="poster-album-art"
             ></img>
