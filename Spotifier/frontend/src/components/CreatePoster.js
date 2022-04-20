@@ -14,6 +14,7 @@ import Alert from "@mui/material/Alert";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import URIHelpDialog from "./URIHelpDialog.js";
 import Poster from "./Poster.js";
+import ToggleAlignment from "./ToggleAlignment.js";
 import html2canvas from 'html2canvas';
 
 export default class CreatePoster extends Component {
@@ -24,9 +25,11 @@ export default class CreatePoster extends Component {
             uri: "blank",
             errorMsg: "",
             successMsg: "",
+
+            response: null,
+
             includeArtist: false,
             removeRemastered: false,
-            response: null,
 
             disallowNameAdd: false,
             disallowRRemoval: false,
@@ -153,9 +156,10 @@ export default class CreatePoster extends Component {
         this.clearPoster();
         document.getElementById("customize-page").hidden = true;
         document.getElementById("create-page").hidden = false;
-        if(document.body.contains(document.getElementById("scroll-heading"))){
+        if (document.body.contains(document.getElementById("scroll-heading"))) {
             document.getElementById("scroll-heading").remove();
         }
+        document.getElementById("flavor-text").value = "";
     }
 
     // Download button
@@ -422,9 +426,7 @@ export default class CreatePoster extends Component {
                 // Setting year resource text
                 this.handleArtistName();
 
-                // Clearing the tracklist. Should have other data here
-                var trackContainer = document.getElementById("poster-resource-tracks");
-                trackContainer.innerHTML = "";
+                document.getElementById("poster-resource-tracks").innerHTML = "";
 
                 // Revealing the poster
                 this.revealPoster("track");
@@ -438,9 +440,8 @@ export default class CreatePoster extends Component {
                 // Clearing year resource
                 document.getElementById("poster-resource-year").innerHTML = "";
 
-                // Clearing the tracklist. Should have other data here
-                var trackContainer = document.getElementById("poster-resource-tracks");
-                trackContainer.innerHTML = "";
+                // If it's updating the image we don't have to clear the track area
+                document.getElementById("poster-resource-tracks").innerHTML = "";
 
                 // Revealing the poster
                 this.revealPoster("artist");
@@ -593,7 +594,7 @@ export default class CreatePoster extends Component {
 
     handleFlavorTextChange(e) {
         // shouldn't work for albums
-        if (this.state.response.type != "album") {
+        if (this.state.response.type == "artist" || this.state.response.type == "track") {
             this.handleFlavorTextRender(e.target.value);
         }
     }
@@ -608,7 +609,7 @@ export default class CreatePoster extends Component {
         lines.forEach((line) => {
             var flavorElem = document.createElement("p");
             var flavorText = document.createTextNode(line);
-            flavorElem.style.cssText = "flex-basis: 100%; text-align: center; margin-top: -20px;";
+            flavorElem.style.cssText = "flex-basis: 100%; margin-top: -20px;";
             flavorElem.appendChild(flavorText);
             document.getElementById("poster-resource-tracks").appendChild(flavorElem);
 
@@ -667,6 +668,7 @@ export default class CreatePoster extends Component {
                     flavorLabel: "Flavor text not supported for albums.",
                     artistLabel: "Include artist",
                 });
+                document.getElementById("flavor-text").value = "";
                 break;
             case "track":
                 this.setState({
@@ -700,7 +702,7 @@ export default class CreatePoster extends Component {
                     flavorLabel: "Flavor text not supported for playlists.",
                     artistLabel: "Include creator",
                 });
-                // this.handleFlavorTextRender(document.getElementById("flavor-text").value);
+                document.getElementById("flavor-text").value = "";
                 break;
         }
     }
@@ -814,7 +816,6 @@ export default class CreatePoster extends Component {
                                     </Tooltip>
                                 </RadioGroup>
 
-
                                 <Tooltip title="Include the artist's name in the poster design!" arrow placement="left">
                                     <FormControlLabel id="include-artist" control={<Switch />} label={this.state.artistLabel}
                                         disabled={this.state.disallowNameAdd} checked={this.state.includeArtist} onChange={this.handleArtistChange} />
@@ -827,6 +828,8 @@ export default class CreatePoster extends Component {
 
                                 <TextField multiline disabled={this.state.disallowFlavor} id="flavor-text" label={this.state.flavorLabel} variant="standard"
                                     onChange={this.handleFlavorTextChange} />
+
+                                <ToggleAlignment />
 
                             </FormControl>
                         </Grid>
@@ -855,3 +858,4 @@ export default class CreatePoster extends Component {
         );
     }
 }
+
