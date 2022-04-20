@@ -256,7 +256,8 @@ export default class CreatePoster extends Component {
         if (type != "blank") {
             try {
                 // Execute API calls and handle data
-                fetch("/posterise/?id=" + id + "&type=" + type, requestOptions)
+                // fetch("/posterise/?id=" + id + "&type=" + type, requestOptions) When testing
+                fetch("./api/posterise/?id=" + id + "&type=" + type, requestOptions)
                     .then((response) => response.json())
                     .then((response) => {
                         // Handle passed or failed responses
@@ -306,12 +307,15 @@ export default class CreatePoster extends Component {
 
     // Authenticate spotify scripts
     authenticateSpotify() {
-        fetch("/is-authenticated")
-            .then((response) => response.json())
-            .then((data) => {
+        // fetch("/is-authenticated") when testing
+        fetch("./api/is-authenticated", { 'Accept': 'application/json', })
+            .then(async (response) => {
+                const data = await response.json();
+                console.log(data);
                 this.setState({ spotifyAuthenticated: data.status });
                 if (!data.status) {
-                    fetch("/get-auth-url")
+                    //  fetch("/get-auth-url") when testing
+                    fetch("./api/get-auth-url")
                         .then((response) => response.json())
                         .then((data) => {
                             window.location.replace(data.url);
