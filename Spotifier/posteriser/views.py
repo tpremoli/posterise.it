@@ -70,8 +70,11 @@ class Posterise(APIView):
 
             # If there's an issue we add info and return to user.
             if "error" in response:
-                statuscode = {
-                    "status": response["error"]["status"], "errorMsg": response["error"]["message"]}
+                print(response)
+                try:
+                    statuscode = {"status": response["error"]["status"], "errorMsg": response["error"]["message"]}
+                except:
+                    statuscode = {"status": 404, "errorMsg": response["error"]}
                 response.update(statuscode)
                 return Response(response, status=status.HTTP_404_NOT_FOUND)
 
