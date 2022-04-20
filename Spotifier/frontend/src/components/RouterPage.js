@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import AboutPage from "./AboutPage";
+import Examples from "./Examples";
 import CreatePoster from "./CreatePoster";
 import Home from "./Home";
 import ReportPage from "./ReportPage";
@@ -21,7 +21,7 @@ export default class RouterPage extends Component {
             <Router>
                 <Routes>
                     <Route exact path="/" element={<Home />} />
-                    <Route path="/about" element={<AboutPage />} />
+                    <Route path="/examples" element={<Examples />} />
                     <Route path="/create-poster" element={<CreatePoster />} />
                     <Route path="/report-bug" element={<ReportPage />} />
                 </Routes>

@@ -153,6 +153,9 @@ export default class CreatePoster extends Component {
         this.clearPoster();
         document.getElementById("customize-page").hidden = true;
         document.getElementById("create-page").hidden = false;
+        if(document.body.contains(document.getElementById("scroll-heading"))){
+            document.getElementById("scroll-heading").remove();
+        }
     }
 
     // Download button
@@ -609,9 +612,9 @@ export default class CreatePoster extends Component {
             flavorElem.appendChild(flavorText);
             document.getElementById("poster-resource-tracks").appendChild(flavorElem);
 
-            // Shrinks font just like for tracks
-            this.shrinkFont(document.getElementById("poster-resource-tracks"));
         });
+        // Shrinks font just like for tracks
+        this.shrinkFont(document.getElementById("poster-resource-tracks"));
     }
 
     // Checks if childDiv is outside the container
@@ -767,7 +770,7 @@ export default class CreatePoster extends Component {
                         <Grid item xs={12} align="center">
                             <FormControl component="fieldset">
 
-                                <TextField id="standard-basic" label="URL/URI" variant="standard"
+                                <TextField id="standard-basic" label="Song Link" variant="standard"
                                     onChange={this.handleURIChange} />
                                 <URIHelpDialog />
 

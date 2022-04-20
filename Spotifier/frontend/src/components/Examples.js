@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { Paper } from "@mui/material";
 
-export default class AboutPage extends Component {
+export default class Examples extends Component {
     constructor(props) {
         super(props);
     }
@@ -25,7 +25,7 @@ export default class AboutPage extends Component {
                 <Paper id="create-page" width="80vw" item p={3} m={3} component={Grid} >
                     <Grid item xs={12} align="center" width="100%">
                         <Typography component="h1" variant="h1" style={{ fontSize: "300%" }}>
-                            About page (to be implemented)
+                            Examples
                         </Typography>
                     </Grid>
                     <Grid item xs={12} pb={6} align="center">

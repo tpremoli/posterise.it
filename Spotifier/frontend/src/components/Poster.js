@@ -33,7 +33,7 @@ export default function Poster() {
                 </p>
                 <div id="poster-resource-tracks" style={{
                     fontFamily: "Oswald", color: "#2c2b29", fontSize: "24px", fontWeight: 400,
-                    marginLeft: 0, marginTop: -20, lineHeight: "90%",
+                    marginLeft: 0, marginTop: -15, lineHeight: "90%", justifyContent: "space-between"
                 }}>
                 </div>
             </div>
