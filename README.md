@@ -15,15 +15,10 @@ In /Spotifier/Frontend:
     npm i webpack webpack-cli --save-dev
     npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev
     npm i react react-dom --save-dev
-    npm install react-router-dom
-    npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
-    npm install @babel/plugin-proposal-class-properties
-    npm install --save html2canvas
-
-    <!-- npm install @material-ui/core@next -->
-    <!-- npm install @material-ui/lab@next -->
-    <!-- npm install dom-to-image -->
-
+    npm i react-router-dom
+    npm i @mui/material @emotion/react @emotion/styled @mui/icons-material
+    npm i @babel/plugin-proposal-class-properties
+    npm i --save html2canvas
 
 To actually run it:
 
