@@ -6,7 +6,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Box from '@mui/material/Box';
 
-export default function ToggleButtonNotEmpty() {
+export default function ToggleAlignment(props) {
     const [alignment, setAlignment] = React.useState('left');
 
     const handleAlignment = (event, newAlignment) => {
