@@ -5,12 +5,12 @@
 Posteriser is a simple web app that takes advantage of Spotify APIs in order to generate Pinterest-style album posters, quickly and efficiently.
 
 ## Prerequisites:
-In the root directory (/Spotifier) run:
+In the root directory (/posteriseit) run:
 
     pip install -r requirements.txt
 
 Beyond that, npm package manager is necessary to run the javascript libraries.
-In /Spotifier/Frontend:
+In /posteriseit/frontend:
 
     npm i webpack webpack-cli --save-dev
     npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev

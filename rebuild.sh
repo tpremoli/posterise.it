@@ -1,6 +1,6 @@
-cd ~/Spotifier
+cd ~/posteriseit
 git pull
-cd Spotifier
+cd PosteriseIt
 cd frontend
 npm run dev
 sudo cp ./build/main.js /var/www/html/static/frontend

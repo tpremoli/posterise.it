@@ -4,10 +4,10 @@ Ensure development --watch is enabled in package.json
 Ensure that the right address is being accessed in fetch situations
 
 -- CMD 1: --
-cd spotifier
+cd posteriseit
 python manage.py runserver
 
 -- CMD 2: --
-cd spotifier
+cd posteriseit
 cd frontend
 npm run dev
